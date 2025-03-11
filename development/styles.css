@@ -1,0 +1,140 @@
+/* BEGINNING OF NAVBAR STYLINGS */
+
+.navbar {
+    background-color: #303030;
+}
+
+.navbar-login-button,
+.navbar-signup-button {
+    background-color: orange;
+    border-radius: 8%;
+}
+
+/* END OF NAVBAR STYLINGS */
+
+/* BEGINNING OF LOGIN STYLINGS */
+
+#login-title {
+    color: white;
+}
+
+#login {
+    background-color: black;
+    height: 100vh;
+    width: 100vw;
+    margin-top: 65px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.login-container {
+    background-color: #303030;
+    height: 40vh;
+    width: 40vw;
+    border-radius: 3%;
+    display: flex;
+    flex-direction: column;
+}
+
+.login-container label {
+    color: white;
+}
+
+.login-form {
+    margin-left: 7%;
+    margin-top: 5%;
+}
+
+.login-form input {
+    width: 90%;
+    background-color: transparent;
+    border-radius: 4%;
+    color: white;
+}
+
+.login-form button {
+    background-color: orange;
+    border-radius: 8%;
+    width: 90%;
+}
+
+#errormessage {
+    color: red;
+    text-align: center;
+}
+
+/* END OF LOGIN STYLINGS */
+
+/* BEGINNING OF REGISTRATION STYLINGS */
+
+#registration-title {
+    color: white;
+}
+
+#registration {
+    background-color: black;
+    height: 100vh;
+    width: 100vw;
+    margin-top: 65px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.registration-container {
+    background-color: #303030;
+    height: 85vh;
+    width: 40vw;
+    border-radius: 3%;
+    display: flex;
+    flex-direction: column;
+}
+
+.registration-container label {
+    color: white;
+}
+
+.registration-form {
+    margin-left: 7%;
+    margin-top: 3%;
+}
+
+.registration-form input {
+    width: 90%;
+    background-color: transparent;
+    border-radius: 4%;
+    color: white;
+}
+
+.registration-form button {
+    width: 90%;
+    background-color: orange;
+    border-radius: 8%;
+}
+
+/* END OF REGISTRATION STYLINGS */
+
+/* BEGINNING OF FOOTER STYLINGS */
+
+#footer-section {
+    background-color: #303030;
+    color: white;
+    text-align: center;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer-text p {
+    font-size: 1vw;
+    padding-top: 15px;
+}
+
+/* END OF FOOTER STYLINGS

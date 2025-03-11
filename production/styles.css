@@ -1,0 +1,72 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #000;
+    margin: 0;
+}
+
+form {
+    background: #222;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px 0px rgba(255, 255, 255, 0.2);
+    width: 350px;
+    text-align: center;
+}
+
+h2 {
+    color: white;
+}
+
+label {
+    color: white;
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+input, button {
+    display: block;
+    width: 90%; 
+    margin: 15px auto; 
+    padding: 15px;
+    font-size: 18px;
+    border-radius: 5px;
+    border: none;
+    text-align: center; 
+}
+
+input {
+    background: #333;
+    color: white;
+    border: 1px solid #444;
+}
+
+button {
+    background: orange;
+    color: white;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #ff4500;
+}
+.register-link {
+    margin-top: 10px;
+}
+.register-link a {
+    color: orange;
+    font-size: 16px;
+    text-decoration: none;
+    font-weight: bold;
+}
+.register-link a:hover {
+    color: #ff4500;
+    text-decoration: underline;
+}
