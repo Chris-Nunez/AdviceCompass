@@ -37,7 +37,6 @@
             <h2 id="registration-title">Registration</h2>
             <div class="registration-container">
                 <div id="errormessage" style="color:red;"></div>  <!-- This div will hold the error messages -->
-                <p id="message" style="color: red; display: none;"></p> <!-- Message Display -->
                 <form class="registration-form" id="registration-form" action="register.php" method="POST">
                     <label for="first_name">First Name</label><br>
                     <input type="text" id="first_name" name="first_name" required> <br> <br>
@@ -122,7 +121,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    var messageBox = document.getElementById("message");
+                    var messageBox = document.getElementById("errormessage");
                     messageBox.style.display = "block"; // Show message box
 
                     if (data.status === "error") {
@@ -133,7 +132,7 @@
                         messageBox.innerText = data.message; // Show success message
                         
                         // Automatically submit the form after success and redirect to login
-                        document.getElementById("registration-form").submit(); // Submit the form
+                        window.location.href = "index.html";
                     }
                 })
                 .catch(error => console.error("Error:", error));

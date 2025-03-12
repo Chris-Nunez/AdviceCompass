@@ -30,10 +30,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // 🔹 Insert new user
         $query = $conn->prepare("INSERT INTO Users (First_Name, Last_Name, Username, Email, User_Password) VALUES (?, ?, ?, ?, ?)");
         $query->bind_param("sssss", $first_name, $last_name, $username, $email, $password);
+        
 
         if ($query->execute()) {
-            header("Location: login.php");
-            exit();  // Make sure no further code is executed after the redirect
+            echo json_encode(["status" => "success", "message" => "Registration successful! Redirecting..."]);
+            exit();  // Make sure to exit after sending the JSON response
         } else {
             echo json_encode(["status" => "error", "message" => "Database error: " . $conn->error]);
             exit();
