@@ -13,8 +13,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = $query->get_result();
 
     if ($result->num_rows > 0) {
-
-
+        $row = $result->fetch_assoc();
+        echo json_encode(["status" => "success", "user_id" => $row["User_ID"]]);
     } 
     else {
         // No user found

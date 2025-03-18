@@ -1,5 +1,6 @@
 <?php
-    session_start();
+    include 'config.php';
+    include 'home-data.php';
 ?>
 
 <!DOCTYPE html>
@@ -34,10 +35,12 @@
                                 <button class="navbar-signup-button">Sign Up</button>
                             </a>
                         <?php else: ?>
+                            <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                            <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
                             <a href="settings.html">
-                                <i class="bi bi-gear"></i>
+                                <i class="bi bi-gear me-4" id="gear-icon"></i>
                             </a>
-                            <a href="logout.php">
+                            <a href="logout.php">   
                                 <button class="navbar-logout-button">Logout</button>
                             </a>
                         <?php endif; ?>
@@ -45,6 +48,49 @@
                 </div>
             </div>
         </nav>
+
+        <section id="main">
+            <div class="main-container">
+                <div id="home-title">
+                    <h1>Home</h1>
+                </div>
+                <div class="row mt-5">
+                    <div class="home-preferred-categories-container col col-7 col-lg-3">
+                        
+                    </div>
+
+                    <div class="home-explore-categories-container col col-7 col-lg-3">
+                        <div class="explore-categories-container-title">
+                            <h2>Explore Thread Categories</h2>
+                        </div>
+                        <?php if (isset($_SESSION['User_ID']) || isset($_SESSION['Username'])): ?>
+
+                            <?php for ($i = 0; $i < count($explore_categories); $i++): ?>
+                                <div class="home-category-box">
+                                    <div class="category-name">
+                                        <h4><?php echo htmlspecialchars($explore_categories[$i]); ?></h4>
+                                    </div>
+                                    <div class="category-username">
+                                        Made by <?php echo htmlspecialchars($explore_usernames[$i]); ?>
+                                    </div>
+                                </div>
+                            <?php endfor; ?>
+
+                            <a href="explore-thread-categories.php">
+                                <button class="home-explore-thread-categories-button">Go -></button>
+                            </a>
+
+                        <?php else: ?>
+
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="home-following-threads-container col col-7 col-lg-3">
+
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <section id="footer-section">
             <div class="footer-container">
