@@ -2,6 +2,7 @@
     session_start();
     include 'config.php';
     include 'explore-thread-categories-data.php';
+    $_SESSION['last_page'] = 'explore-thread-categories.php';
 ?>
 
 <!DOCTYPE html>
@@ -18,7 +19,7 @@
 
         <nav class="navbar navbar-expand-md fixed-top" style="background-color: #303030;">
             <div class="container">
-                <a href="#home" class="navbar-brand text-white">
+                <a href="home.php" class="navbar-brand text-white">
                     <h1 class="text-white mb-0">AdviceCompass</h1>
                 </a>
         
@@ -44,7 +45,7 @@
         <section id="main">
             <div class="main-container px-5">
 
-                <div class="d-flex align-items-center justify-content-between">
+                <div class="top-container d-flex align-items-center justify-content-between">
             
                     <!-- Left Section: Back & Create Category Buttons -->
                     <div class="d-flex align-items-center flex-1">
@@ -100,7 +101,7 @@
                         </div>
                     <?php } ?>
                 </div>
-
+                
             </div>
         </section>
 

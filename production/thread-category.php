@@ -1,6 +1,7 @@
 <?php
     session_start();
     include 'config.php';
+    $backUrl = $_SESSION['last_page'] ?? 'explore-thread-categories.php';
 
     // Check if category_id exists
     if (!isset($_GET['category_id'])) {
@@ -65,18 +66,22 @@
         <section id="main">
             <div class="main-container px-5">
 
-                <div class="d-flex align-items-center justify-content-between">
+                <div class="top-container d-flex align-items-center justify-content-between">
             
                     <!-- Left Section: Back & Create Category Buttons -->
                     <div class="d-flex align-items-center flex-1">
 
-                        <a href="explore-thread-categories.php">
+                        <a href="<?= htmlspecialchars($backUrl) ?>">
                             <button class="thread-category-back-button mx-2"><i class="bi bi-arrow-left"></i> Back</button>
                         </a>
 
                         <a href="create-thread.php?category_id=<?php echo urlencode($category_id); ?>">
                             <button class="create-thread-button mx-2"><i class="bi bi-plus-lg"></i> Create Thread</button>
                         </a>
+
+                        <button class="favorite-category-button mx-2" id="favorite-category-btn" category-id="<?php echo $category_id; ?>">
+                            <i class="bi bi-star"></i> Favorite
+                        </button>
                     </div>
 
                     <!-- Center Section: Title -->
@@ -134,6 +139,35 @@
               </div>
             </div>
         </section>
+
+        <script>
+            document.getElementById('favorite-category-btn').addEventListener('click', function() {
+                let button = this;
+                let categoryId = button.getAttribute('category-id');
+
+                fetch('favorite-thread-category-process.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'category_id=' + encodeURIComponent(categoryId)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (button.classList.contains('favorited')) {
+                            button.innerHTML = '<i class="bi bi-star"></i> Favorite';
+                            button.classList.remove('favorited');
+                        } else {
+                            button.innerHTML = '<i class="bi bi-star-fill"></i> Favorited';
+                            button.classList.add('favorited');
+                        }
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        </script>
+
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     </body>

@@ -17,7 +17,7 @@
 
         <nav class="navbar navbar-expand-md fixed-top" style="background-color: #303030;">
             <div class="container">
-                <a href="#home" class="navbar-brand text-white">
+                <a href="home.php" class="navbar-brand text-white">
                     <h1 class="text-white mb-0">AdviceCompass</h1>
                 </a>
         
@@ -56,11 +56,33 @@
                 </div>
                 <div class="row mt-5">
                     <div class="home-preferred-categories-container col col-7 col-lg-3">
-                        
+                        <div class="categories-container-title">
+                            <h2>Favorited Thread Categories</h2>
+                        </div>
+                        <?php if (isset($_SESSION['User_ID']) || isset($_SESSION['Username'])): ?>
+
+                            <?php for ($i = 0; $i < count($preferred_categories); $i++): ?>
+                                <div class="home-category-box">
+                                    <div class="category-name">
+                                        <h4><?php echo htmlspecialchars($preferred_categories[$i]); ?></h4>
+                                    </div>
+                                    <div class="category-username">
+                                        Made by <?php echo htmlspecialchars($preferred_categories_usernames[$i]); ?>
+                                    </div>
+                                </div>
+                            <?php endfor; ?>
+
+                            <a href="favorite-thread-categories.php">
+                                <button class="home-thread-categories-button">Go -></button>
+                            </a>
+
+                        <?php else: ?>
+
+                        <?php endif; ?>
                     </div>
 
                     <div class="home-explore-categories-container col col-7 col-lg-3">
-                        <div class="explore-categories-container-title">
+                        <div class="categories-container-title">
                             <h2>Explore Thread Categories</h2>
                         </div>
                         <?php if (isset($_SESSION['User_ID']) || isset($_SESSION['Username'])): ?>
@@ -77,7 +99,7 @@
                             <?php endfor; ?>
 
                             <a href="explore-thread-categories.php">
-                                <button class="home-explore-thread-categories-button">Go -></button>
+                                <button class="home-thread-categories-button">Go -></button>
                             </a>
 
                         <?php else: ?>

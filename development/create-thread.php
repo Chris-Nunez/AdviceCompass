@@ -26,7 +26,7 @@
 
         <nav class="navbar navbar-expand-md fixed-top" style="background-color: #303030;">
             <div class="container">
-                <a href="#home" class="navbar-brand text-white">
+                <a href="home.php" class="navbar-brand text-white">
                     <h1 class="text-white mb-0">AdviceCompass</h1>
                 </a>
         
