@@ -10,8 +10,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $username = $_POST['username'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $occupation_title = $_POST['occupation_title'];
+    $bio_text = $_POST['bio_text'];
+    $location_state = $_POST['location_state'];
 
-    // 🔹 Check if email or username already exists
+    //Check if email or username already exists
     $query = $conn->prepare("SELECT Email, Username FROM Users WHERE Email = ? OR Username = ?");
     $query->bind_param("ss", $email, $username);
     $query->execute();
@@ -27,14 +30,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     } 
     else {
-        // 🔹 Insert new user
-        $query = $conn->prepare("INSERT INTO Users (First_Name, Last_Name, Username, Email, User_Password) VALUES (?, ?, ?, ?, ?)");
-        $query->bind_param("sssss", $first_name, $last_name, $username, $email, $password);
-        
+        //Insert new user with the new fields
+        $query = $conn->prepare("INSERT INTO Users (First_Name, Last_Name, Username, Email, User_Password, Occupation_Title, Bio_Text, Location_State) 
+                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $query->bind_param("ssssssss", $first_name, $last_name, $username, $email, $password, $occupation_title, $bio_text, $location_state);
 
         if ($query->execute()) {
             echo json_encode(["status" => "success", "message" => "Registration successful! Redirecting..."]);
-            exit();  // Make sure to exit after sending the JSON response
+            exit();  
         } else {
             echo json_encode(["status" => "error", "message" => "Database error: " . $conn->error]);
             exit();
@@ -42,8 +45,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
     }
 
-    // 🔹 Close the connection
     $query->close();
     $conn->close();
 }
 ?>
+

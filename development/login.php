@@ -37,7 +37,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Close the connection
     $query->close();
     $conn->close();
 }

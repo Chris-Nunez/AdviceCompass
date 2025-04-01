@@ -1,5 +1,5 @@
 <?php
-include 'config.php'; // Adjust based on your setup
+include 'config.php'; 
 
 $thread_id = $_GET['thread_id'] ?? '';
 
@@ -38,7 +38,7 @@ $query = $conn->prepare("SELECT * FROM ThreadCommentReplies
                              INNER JOIN Users ON ThreadCommentReplies.User_ID = Users.User_ID
                              WHERE Thread_Comment_ID = ? 
                              ORDER BY Thread_Comment_Reply_Date_Time DESC");
-$query->bind_param("i", $comment_id); // Use $comment_id here to match the comment
+$query->bind_param("i", $comment_id); 
 $query->execute();
 $result = $query->get_result();
 

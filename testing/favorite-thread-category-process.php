@@ -1,10 +1,10 @@
 <?php
 session_start();
-include 'config.php'; // Include your database connection
+include 'config.php'; 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['category_id'])) {
     $category_id = intval($_POST['category_id']);
-    $user_id = $_SESSION['User_ID']; // Assuming user is logged in
+    $user_id = $_SESSION['User_ID']; 
 
     if (!$user_id) {
         echo json_encode(['success' => false, 'message' => 'User not logged in']);
@@ -33,4 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['category_id'])) {
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request']);
 }
+
+$query->close();
+$conn->close();
 ?>

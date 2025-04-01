@@ -82,8 +82,13 @@
                                 </div>
 
                                 <div class="category-username">
-                                    <p>Made by: <?php echo htmlspecialchars($explore_usernames[$i]); ?> </p>
+                                    <p>Made by: 
+                                        <a href="view-profile.php?user_id=<?php echo urlencode($explore_user_id[$i]); ?>">
+                                            <?php echo htmlspecialchars($explore_usernames[$i]); ?>
+                                        </a>
+                                    </p>
                                 </div>
+
 
                                 <div class="category-thread-count">
                                     <p><?php echo htmlspecialchars($explore_thread_count[$i]); ?> Total Threads</p>

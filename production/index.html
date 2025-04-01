@@ -36,7 +36,7 @@
         <section id="login">
             <h2 id="login-title">Login</h2>
             <div class="login-container">
-                <div id="errormessage" style="color:red;"></div>  <!-- This div will hold the error messages -->
+                <div id="errormessage" style="color:red;"></div>  
                 <form class="login-form" id="login-form" action="login.php" method="POST">
                     <label for="email">Email</label><br>
                     <input type="text" id="email" name="email" required> <br> <br>
@@ -68,7 +68,6 @@
                 var email = document.getElementById("email").value;
                 var password = document.getElementById("password").value;
 
-                // Validate email
                 if (!emailRegex.test(email)) {
                     errormessage += "*Invalid Email format<br>";
                 }
@@ -79,7 +78,7 @@
                     messageBox.innerHTML = errormessage;  // Display error messages
                     messageBox.style.color = "red";
                     messageBox.style.display = "block";
-                    return;  // Stop further execution
+                    return;  
                 }
 
                 // If validation passes, submit form via AJAX

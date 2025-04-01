@@ -8,7 +8,7 @@
         die("No category selected.");
     }
 
-    $category_id = intval($_GET['category_id']);  // Ensure it's an integer
+    $category_id = intval($_GET['category_id']);  
 
     // Fetch category details
     $query = $conn->prepare("SELECT * FROM IndustryThreadCategories WHERE Industry_Thread_Category_ID = ?");
@@ -68,7 +68,6 @@
 
                 <div class="top-container d-flex align-items-center justify-content-between">
             
-                    <!-- Left Section: Back & Create Category Buttons -->
                     <div class="d-flex align-items-center flex-1">
 
                         <a href="<?= htmlspecialchars($backUrl) ?>">
@@ -84,19 +83,15 @@
                         </button>
                     </div>
 
-                    <!-- Center Section: Title -->
                     <div class="explore-categories-title">
                         <h1><?php echo htmlspecialchars($category['Industry_Thread_Category_Name']); ?></h1>
                     </div>
 
-                    <!-- Right Section: Search Bar -->
                     <div class="search-container flex-1 d-flex justify-content-end">
                         <input type="text" class="form-control mx-2" placeholder="Search threads..." id="thread-search" style="width: 250px;">
                     </div>
 
                 </div>
-
-
 
                 <div class="row mt-5">
                     <?php
@@ -110,7 +105,11 @@
                                 </div>
 
                                 <div class="thread-username">
-                                    <p>Made by: <?php echo htmlspecialchars($thread_username[$i]); ?> </p>
+                                    <p>Made by: 
+                                        <a href="view-profile.php?user_id=<?php echo urlencode($thread_user_id[$i]); ?>">
+                                            <?php echo htmlspecialchars($thread_username[$i]); ?>
+                                        </a>
+                                    </p>
                                 </div>
 
                                 <div class="thread-text">

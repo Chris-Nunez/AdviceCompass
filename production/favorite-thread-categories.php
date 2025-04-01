@@ -79,7 +79,11 @@
                                 </div>
 
                                 <div class="category-username">
-                                    <p>Made by: <?php echo htmlspecialchars($favorite_categories_usernames[$i]); ?> </p>
+                                    <p>Made by: 
+                                        <a href="user-profile.php?user_id=<?php echo urlencode($favorite_categories_user_ids[$i]); ?>">
+                                            <?php echo htmlspecialchars($favorite_categories_usernames[$i]); ?>
+                                        </a>
+                                    </p>
                                 </div>
 
                                 <div class="category-thread-count">

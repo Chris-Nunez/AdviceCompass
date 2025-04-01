@@ -1,14 +1,9 @@
 <?php
-// Fetching replies for a specific comment
-
-// Include your database connection
 include 'config.php';
 
-// Get the comment ID passed from the AJAX request
 if (isset($_GET['comment_id'])) {
     $comment_id = (int) $_GET['comment_id'];
 
-    // Prepare the SQL query
     $query = $conn->prepare("SELECT * FROM ThreadCommentReplies
                              INNER JOIN Users ON ThreadCommentReplies.User_ID = Users.User_ID
                              WHERE Thread_Comment_ID = ? 
@@ -17,7 +12,6 @@ if (isset($_GET['comment_id'])) {
     $query->execute();
     $result = $query->get_result();
 
-    // Create arrays to hold reply data
     $replies = [];
     while ($row = $result->fetch_assoc()) {
         $replies[] = [
@@ -30,9 +24,11 @@ if (isset($_GET['comment_id'])) {
         ];
     }
 
-    // Return the replies in JSON format
     echo json_encode($replies);
 } else {
     echo json_encode([]);
 }
+
+$query->close();
+$conn->close();
 ?>

@@ -37,7 +37,7 @@
                         <?php else: ?>
                             <i class="bi bi-person-fill me-2" id="user-icon"></i>
                             <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
-                            <a href="settings.html">
+                            <a href="settings.php">
                                 <i class="bi bi-gear me-4" id="gear-icon"></i>
                             </a>
                             <a href="logout.php">   
@@ -98,7 +98,7 @@
                                 </div>
                             <?php endfor; ?>
 
-                            <a href="explore-thread-categories.php">
+                            <a href="explore-thread-categories.php" id="explore-categories-button">
                                 <button class="home-thread-categories-button">Go -></button>
                             </a>
 

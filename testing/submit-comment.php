@@ -19,18 +19,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Insert the comment into the ThreadComments table
-    $stmt = $conn->prepare("INSERT INTO ThreadComments (Thread_Comment_Text, User_ID, Thread_ID) VALUES (?, ?, ?)");
-    $stmt->bind_param("sii", $comment_text, $user_id, $thread_id);
+    $query = $conn->prepare("INSERT INTO ThreadComments (Thread_Comment_Text, User_ID, Thread_ID) VALUES (?, ?, ?)");
+    $query->bind_param("sii", $comment_text, $user_id, $thread_id);
 
-    if ($stmt->execute()) {
-        $comment_id = $stmt->insert_id;
+    if ($query->execute()) {
+        $comment_id = $query->insert_id;
         $comment_date_time = date("Y-m-d H:i:s"); // Current timestamp
 
         // Update the Thread_Comment_Count field in the Threads table
-        $updateStmt = $conn->prepare("UPDATE Threads SET Thread_Comment_Count = Thread_Comment_Count + 1 WHERE Thread_ID = ?");
-        $updateStmt->bind_param("i", $thread_id);
-        $updateStmt->execute();
-        $updateStmt->close();
+        $query = $conn->prepare("UPDATE Threads SET Thread_Comment_Count = Thread_Comment_Count + 1 WHERE Thread_ID = ?");
+        $query->bind_param("i", $thread_id);
+        $query->execute();
+        $query->close();
 
         echo json_encode([
             "success" => true,
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(["success" => false, "message" => "Failed to post comment."]);
     }
 
-    $stmt->close();
+    $query->close();
     $conn->close();
 }
 

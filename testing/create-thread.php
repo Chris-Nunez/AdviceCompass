@@ -52,7 +52,7 @@
         <section id="create-thread">
             <h2 id="create-thread-title">Create Thread</h2>
             <div class="create-thread-container">
-                <div id="errormessage" style="color:red;"></div>  <!-- This div will hold the error messages -->
+                <div id="errormessage" style="color:red;"></div> 
                 <form class="create-thread-form" id="create-thread-form" action="create-thread-process.php" method="POST">
                     <label for="thread-title">Thread title</label><br>
                     <input type="text" id="thread-title" name="thread-title" required> <br> <br>
@@ -65,7 +65,7 @@
 
                     <input type="hidden" name="category_id" value="<?php echo htmlspecialchars($category_id); ?>">
 
-                    <button type="submit">Create Thread</button> <br> <br>
+                    <button type="submit" id="create-thread-button">Create Thread</button> <br> <br>
                 </form>               
             </div>
         </section>

@@ -32,9 +32,6 @@ while ($row = $result->fetch_assoc()) {
     $explore_usernames[] = $row['Username'];
 }
 
-
-
-// Close the connection
 $query->close();
 $conn->close();
 

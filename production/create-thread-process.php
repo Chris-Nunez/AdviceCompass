@@ -1,69 +1,46 @@
 <?php
 session_start();
-include 'config.php'; // Connect to DB
+include 'config.php'; 
 
-if (isset($_POST['category_id'])) {
-    $category_id = intval($_POST['category_id']);  // Ensure it's an integer
-} 
-else {
+if (!isset($_POST['category_id'])) {
     die("No category selected.");
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $thread_title = $_POST['thread-title'];
-    $thread_text = $_POST['thread-text'];
-    $thread_imagePath = null; // Default if no image is uploaded
+$category_id = intval($_POST['category_id']);
+$thread_title = $_POST['thread-title'];
+$thread_text = $_POST['thread-text'];
+$thread_imagePath = null; 
 
-    // Check if an image was uploaded
-    if (!empty($_FILES["thread-image"]["name"])) {
-        $targetDir = "uploads/"; // Folder to store images
-        $fileName = basename($_FILES["thread-image"]["name"]);
-        $targetFilePath = $targetDir . time() . "_" . $fileName; // Add timestamp to avoid duplicates
-        $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
-        $allowedTypes = ["jpg", "jpeg", "png", "gif"];
+// Check if an image was uploaded
+if (isset($_FILES["thread-image"]) && $_FILES["thread-image"]["error"] === UPLOAD_ERR_OK) {
+    $targetDir = "uploads/"; 
+    $fileName = time() . "_" . basename($_FILES["thread-image"]["name"]); 
+    $targetFilePath = $targetDir . $fileName;
+    $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+    $allowedTypes = ["jpg", "jpeg", "png", "gif"];
 
-        // Validate file type
-        if (in_array($fileType, $allowedTypes)) {
-            // Move file to server folder
-            if (move_uploaded_file($_FILES["thread-image"]["tmp_name"], $targetFilePath)) {
-                $thread_imagePath = $targetFilePath; // Store file path in DB
-            } else {
-                die("Error uploading the file.");
-            }
+    if (in_array($fileType, $allowedTypes)) {
+        if (move_uploaded_file($_FILES["thread-image"]["tmp_name"], $targetFilePath)) {
+            $thread_imagePath = htmlspecialchars($targetFilePath, ENT_QUOTES, 'UTF-8');
         } else {
-            die("Invalid file type. Only JPG, JPEG, PNG, and GIF allowed.");
+            die("File upload failed.");
         }
+    } else {
+        die("Invalid file type.");
     }
-
-    // Insert thread into the database
-    $query = $conn->prepare("INSERT INTO Threads (Thread_Title, Thread_Text, Thread_Image, User_ID, Industry_Thread_Category_ID) VALUES (?, ?, ?, ?, ?)");
-    $query->bind_param("sssii", $thread_title, $thread_text, $thread_imagePath, $_SESSION['User_ID'], $category_id);
-    $query->execute();
-    $query->close(); // Close after execution
-
-    // Get the updated thread count
-    $query = $conn->prepare("SELECT COUNT(*) FROM Threads WHERE Industry_Thread_Category_ID = ?");
-    $query->bind_param("i", $category_id);
-    $query->execute();
-    $query->bind_result($thread_count);
-    $query->fetch();
-    $query->close(); // Close after fetching
-
-    $query = $conn->prepare("UPDATE IndustryThreadCategories SET Industry_Thread_Category_Thread_Count = ? WHERE Industry_Thread_Category_ID = ?");
-    $query->bind_param("ii", $thread_count, $category_id);
-    $query->execute();
-
-    if ($query->execute()) {
-        echo "Thread created successfully!";
-        header("Location: thread-category.php?category_id=" . urlencode($category_id));
-        exit();
-    } 
-    else {
-        echo "Error: " . $conn->error;
-    }
-
-    // Close connection
-    $query->close();
-    $conn->close();
 }
+
+// Insert into database
+$query = $conn->prepare("INSERT INTO Threads (Thread_Title, Thread_Text, Thread_Image, User_ID, Industry_Thread_Category_ID) VALUES (?, ?, ?, ?, ?)");
+$query->bind_param("sssii", $thread_title, $thread_text, $thread_imagePath, $_SESSION['User_ID'], $category_id);
+
+if (!$query->execute()) {
+    die("Database Error: " . $query->error);
+}
+
+$query->close();
+$conn->close();
+
+header("Location: thread-category.php?category_id=" . urlencode($category_id));
+exit();
 ?>

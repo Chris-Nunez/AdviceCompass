@@ -43,7 +43,7 @@
         <section id="create-category">
             <h2 id="create-category-title">Create Category</h2>
             <div class="create-category-container">
-                <div id="errormessage" style="color:red;"></div>  <!-- This div will hold the error messages -->
+                <div id="errormessage" style="color:red;"></div>  
                 <form class="create-category-form" id="create-category-form" action="create-category-process.php" method="POST">
                     <label for="category-name">Category Name</label><br>
                     <input type="text" id="category-name" name="category-name" required> <br> <br>

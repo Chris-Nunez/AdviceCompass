@@ -2,6 +2,6 @@
 session_start();
 session_unset();
 session_destroy();
-header("Location: index.html"); // Redirect to homepage after logout
+header("Location: index.html"); 
 exit();
 ?>
