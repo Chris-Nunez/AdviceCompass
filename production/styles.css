@@ -167,7 +167,7 @@
 .home-explore-categories-container,
 .home-following-threads-container {
     height: 90vh; /* Each container takes up half the viewport height */
-    max-height: 400px; /* Prevents excessive stretching */
+    max-height: 500px; /* Prevents excessive stretching */
     background-color: #303030;  
     display: flex;
     flex-direction: column;
@@ -212,7 +212,7 @@
 .explore-categories-title {
     color: white;
     text-align: center;
-    transform: translateX(-7%);
+    width: 100%;
 }
 
 .explore-categories-container {
@@ -322,7 +322,7 @@
 }
 
 .thread-container {
-    height: 30vh; /* Each container takes up half the viewport height */
+    height: auto; /* Each container takes up half the viewport height */
     max-height: 400px; /* Prevents excessive stretching */
     background-color: #303030;  
     display: flex;
@@ -450,6 +450,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.favorite-thread-button {
+    background-color: orange;
+    border-radius: 8%;
+    height: 30px;
 }
 
 .view-thread-text {
@@ -694,7 +700,9 @@
 }
 
 .location-state-container,
-.thread_count-container,
+.follower-count-container,
+.following-count-container,
+.thread-count-container,
 .comment-count-container {
     flex: 1; /* Make each container take up equal width */
     text-align: center; /* Center text inside each container */
@@ -724,7 +732,9 @@
 /* BEGINNING OF VIEW FOLLOWERS PAGE */
 
 #followers-title {
-    color: white;  
+    color: white;
+    margin-top: 30px;  
+    text-align: center;
 }
 
 .followers-container {
@@ -742,40 +752,157 @@
     max-width: 100vw; /* Prevents elements from exceeding viewport width */   
 }
 
-.follower-box {
-    background-color: #303030;
-    width: 70%;
-    border-radius: 3%;
+.follower-container {
+    height: auto; /* Each container takes up half the viewport height */
+    max-height: 400px; /* Prevents excessive stretching */
+    background-color: #303030;  
     display: flex;
     flex-direction: column;
-    align-items: stretch; /* Ensures child elements take full width */
-    padding: 15px; /* Adds some spacing inside */
-}
-
-.follower-box a {
-    text-decoration: none; /* Removes underline */
-    display: block; /* Ensures it takes full width if needed */
-    margin-bottom: 10px;
-}
-
-.settings-button {
-    width: 100%;
-    display: block; /* Ensures it takes up full width */
-    padding: 12px;
-    font-size: 16px;
-    border: 2px solid orange;
-    cursor: pointer;
-    background-color: transparent;
-    color: white;
-    border-radius: 5px;
+    justify-content: center;
+    align-items: center;
+    color: white;  
+    border-radius: 10px;
+    margin-bottom: 10px; /* Prevents overlap with footer */
     text-align: center;
 }
 
-.settings-button i {
+.no-followers-container {
+    height: auto; /* Each container takes up half the viewport height */
+    max-height: 400px; /* Prevents excessive stretching */
+    background-color: #303030;  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;  
+    border-radius: 10px;
+    margin-bottom: 10px; /* Prevents overlap with footer */
+    text-align: center;
+}
+
+.no-followers-text {
+    color: white;
+    font-size: 1.5rem;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.follower-button {
+    background-color: orange;
+    border-radius: 8%;
+    height: 30px;
+    margin-bottom: 10px;
+}
+
+.follower-image {
+    width: 80px; /* Adjust width for the image */
+    height: 80px; /* Adjust height for the image */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 50%; /* Circular profile image */
+    background-color: black; /* Placeholder background */
+    margin-top: 10px;
+}
+
+.follower-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.follower-username {
+    font-size: 1.2rem;
+    color: white;
+}
+
+.follower-button i {
     margin-left: 5px; /* Space between text and icon */
 }
 
 /* END OF VIEW FOLLOWERS PAGE */
+
+/* BEGINNING OF VIEW FOLLOWING PAGE */
+
+#following-title {
+    color: white;
+    margin-top: 30px;  
+    text-align: center;
+}
+
+.following-container {
+    height: auto; /* Each container takes up half the viewport height */
+    max-height: 400px; /* Prevents excessive stretching */
+    background-color: #303030;  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;  
+    border-radius: 10px;
+    margin-bottom: 10px; /* Prevents overlap with footer */
+    text-align: center;
+}
+
+.no-following-container {
+    height: auto; /* Each container takes up half the viewport height */
+    max-height: 400px; /* Prevents excessive stretching */
+    background-color: #303030;  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;  
+    border-radius: 10px;
+    margin-bottom: 10px; /* Prevents overlap with footer */
+    text-align: center;
+}
+
+.no-following-text {
+    color: white;
+    font-size: 1.5rem;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.following-button {
+    background-color: orange;
+    border-radius: 8%;
+    height: 30px;
+    margin-bottom: 10px;
+}
+
+.following-image {
+    width: 80px; /* Adjust width for the image */
+    height: 80px; /* Adjust height for the image */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 50%; /* Circular profile image */
+    background-color: black; /* Placeholder background */
+    margin-top: 10px;
+}
+
+.following-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.following-username {
+    font-size: 1.2rem;
+    color: white;
+}
+
+.following-button i {
+    margin-left: 5px; /* Space between text and icon */
+}
+
+/* END OF VIEW FOLLOWING PAGE */
 
 /* BEGINNING OF FOOTER STYLINGS */
 

@@ -29,9 +29,11 @@
         
                 <div class="collapse navbar-collapse" id="nav-collapse">
                     <div class="navbar-nav ms-auto">
-                        <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                        <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
+                            <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                        </a>
                         <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
-                        <a href="settings.html">
+                        <a href="settings.php">
                             <i class="bi bi-gear me-4" id="gear-icon"></i>
                         </a>
                         <a href="logout.php">   
@@ -54,11 +56,6 @@
                         </a>
                     </div>
 
-                    <!-- Center Section: Title -->
-                    <div class="explore-categories-title">
-                        <h1>Favorite Categories</h1>
-                    </div>
-
                     <!-- Right Section: Search Bar -->
                     <div class="search-container flex-1 d-flex justify-content-end">
                         <input type="text" class="form-control mx-2" placeholder="Search categories..." id="category-search" style="width: 250px;">
@@ -66,8 +63,12 @@
 
                 </div>
 
+                <!-- Center Section: Title -->
+                <div class="explore-categories-title">
+                    <h1>Favorite Categories</h1>
+                </div>
 
-                <div class="row mt-5">
+                <div class="row mt-5" id="categories-container">
                     <?php
                     // Loop through the categories and create Bootstrap columns
                     for ($i = 0; $i < count($favorite_categories); $i++) {
@@ -80,7 +81,7 @@
 
                                 <div class="category-username">
                                     <p>Made by: 
-                                        <a href="user-profile.php?user_id=<?php echo urlencode($favorite_categories_user_ids[$i]); ?>">
+                                        <a href="view-profile.php?user_id=<?php echo urlencode($favorite_categories_user_ids[$i]); ?>">
                                             <?php echo htmlspecialchars($favorite_categories_usernames[$i]); ?>
                                         </a>
                                     </p>
@@ -113,6 +114,25 @@
               </div>
             </div>
         </section>
+
+        <script>
+            document.getElementById('category-search').addEventListener('input', function () {
+                let searchQuery = this.value.trim();
+
+                let xhr = new XMLHttpRequest();
+                xhr.open('GET', 'search-favorite-categories.php?query=' + encodeURIComponent(searchQuery), true);
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        document.getElementById('categories-container').innerHTML = xhr.responseText;
+                    }
+                };
+
+                xhr.send();
+            });
+        </script>
+
+
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     </body>

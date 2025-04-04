@@ -1,5 +1,5 @@
 <?php
-include 'config.php'; 
+include 'config.php';
 
 session_start();
 if (!isset($_SESSION['User_ID'])) {
@@ -38,8 +38,7 @@ if ($result->num_rows > 0) {
 }
 
 // Get updated like/dislike counts
-$query = $conn->prepare("SELECT 
-                        SUM(CASE WHEN Is_Like = 1 THEN 1 ELSE 0 END) AS likes,
+$query = $conn->prepare("SELECT SUM(CASE WHEN Is_Like = 1 THEN 1 ELSE 0 END) AS likes,
                         SUM(CASE WHEN Is_Like = 0 THEN 1 ELSE 0 END) AS dislikes
                         FROM ThreadCommentReplyLikes
                         WHERE Thread_Comment_Reply_ID = ?");
@@ -48,17 +47,25 @@ $query->execute();
 $result = $query->get_result();
 $row = $result->fetch_assoc();
 
+// Get the updated like and dislike counts
 $likes = $row['likes'] ?? 0;
 $dislikes = $row['dislikes'] ?? 0;
 
-// Return the updated like/dislike counts for the reply
+// Update the ThreadCommentReplies table with the new like and dislike counts
+$query = $conn->prepare("UPDATE ThreadCommentReplies 
+                        SET Thread_Comment_Reply_Like_Count = ?, Thread_Comment_Reply_Dislike_Count = ? 
+                        WHERE Thread_Comment_Reply_ID = ?");
+$query->bind_param("iii", $likes, $dislikes, $reply_id);
+$query->execute();
+
+// Return the updated like/dislike counts in the response
 echo json_encode([
     "success" => true,
     "likes" => $likes,
     "dislikes" => $dislikes
 ]);
+
 $query->close();
 $conn->close();
 exit();
-
 ?>

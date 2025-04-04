@@ -1,7 +1,36 @@
 <?php
-    session_start();
-    include 'config.php';
-    include 'view-followers-data';
+session_start();
+include 'config.php';
+
+if (!isset($_GET['user_id'])) {
+    die("User ID not provided.");
+}
+
+$user_id = intval($_GET['user_id']);
+
+// Query to fetch all followers of the logged-in user
+$query = $conn->prepare("SELECT Users.User_ID, Users.Username, Users.Profile_Image 
+                        FROM UserFollowers 
+                        INNER JOIN Users ON UserFollowers.Follower_ID = Users.User_ID 
+                        WHERE UserFollowers.Following_ID = ?
+                        ORDER BY Users.First_Name ASC");
+
+$query->bind_param("i", $user_id); 
+$query->execute();
+$result = $query->get_result();
+
+$followers_user_id = [];
+$followers_usernames = [];
+$followers_profile_image = [];
+
+while ($row = $result->fetch_assoc()) {
+    $followers_user_id[] = $row['User_ID'];
+    $followers_usernames[] = $row['Username'];
+    $followers_profile_image[] = $row['Profile_Image'];
+}
+
+$query->close();
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -28,7 +57,9 @@
         
                 <div class="collapse navbar-collapse" id="nav-collapse">
                     <div class="navbar-nav ms-auto">
-                        <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                        <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
+                            <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                        </a>
                         <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
                         <a href="settings.php">
                             <i class="bi bi-gear me-4" id="gear-icon"></i>
@@ -42,31 +73,40 @@
         </nav>
 
         <section id="followers">
-            <div class="followers-container">
+            <div class="main-container">
                 <h2 id="followers-title">Followers</h2>
-
-                <!-- Check if there are followers -->
-                <?php if (!empty($followers_user_id)): ?>
-                    <div class="followers-list">
-                        <?php $i = 0; // Initialize the counter variable i ?>
-                        <?php foreach ($followers_user_id as $follower_id): ?>
-                            <div class="follower-box">
-                                <div class="follower-info">
-                                    <img src="<?php echo htmlspecialchars($followers_profile_image[$i]); ?>" alt="Profile Image" class="follower-image">
-                                    <div class="follower-details">
-                                        <p><strong><?php echo htmlspecialchars($followers_first_name[$i]) . " " . htmlspecialchars($followers_last_name[$i]); ?></strong></p>
-                                        <p>@<?php echo htmlspecialchars($followers_usernames[$i]); ?></p>
+                <div class="row">
+                    <?php if (count($followers_user_id) > 0) { ?>
+                        <?php for ($i = 0; $i < count($followers_user_id); $i++) { ?>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                                <div class="follower-container">
+                                    <div class="follower-image">
+                                        <?php if (!empty($followers_profile_image[$i])) : ?>
+                                            <img src="<?php echo htmlspecialchars($followers_profile_image[$i]); ?>" alt="Profile Picture" class="profile-pic">
+                                        <?php endif; ?>
                                     </div>
+                                    <div class="follower-username">
+                                        <?php echo htmlspecialchars($followers_usernames[$i]); ?>
+                                    </div>
+                                    <a href="view-profile.php?user_id=<?php echo urlencode($followers_user_id[$i]); ?>">
+                                        <button class="follower-button">Go <i class="bi bi-arrow-right"></i></button>
+                                    </a>
                                 </div>
                             </div>
-                            <?php $i++; // Increment the counter after each iteration ?>
-                        <?php endforeach; ?>
-                    </div>
-                <?php else: ?>
-                    <p>No followers found.</p>
-                <?php endif; ?>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                            <div class="no-followers-container">
+                                <div class="no-followers-text">
+                                    <p>No followers to display.</p>
+                                </div> 
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
             </div>
         </section>
+
 
         <section id="footer-section">
             <div class="footer-container">
@@ -75,7 +115,6 @@
               </div>
             </div>
         </section>
-
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     </body>

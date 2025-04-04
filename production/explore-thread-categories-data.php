@@ -3,7 +3,7 @@ include 'config.php';
 
 $query = $conn->prepare("SELECT IndustryThreadCategories.Industry_Thread_Category_ID, IndustryThreadCategories.Industry_Thread_Category_Name, Users.Username, Users.User_ID, IndustryThreadCategories.Industry_Thread_Category_Thread_Count, YEAR(Industry_Thread_Category_Year) AS Industry_Thread_Category_Year FROM IndustryThreadCategories 
                         INNER JOIN Users ON IndustryThreadCategories.User_ID = Users.User_ID
-                        ORDER BY Industry_Thread_category_Year DESC");
+                        ORDER BY IndustryThreadCategories.Industry_Thread_Category_Year DESC");
 $query->execute();
 $result = $query->get_result();
 
@@ -23,7 +23,6 @@ while ($row = $result->fetch_assoc()) {
 }
 
 
-// Close the connection
 $query->close();
 $conn->close();
 

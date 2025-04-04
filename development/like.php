@@ -38,7 +38,7 @@ if ($result->num_rows > 0) {
 }
 
 // Get updated like/dislike counts
-$stmt = $conn->prepare("SELECT SUM(CASE WHEN Is_Like = 1 THEN 1 ELSE 0 END) AS likes,
+$query = $conn->prepare("SELECT SUM(CASE WHEN Is_Like = 1 THEN 1 ELSE 0 END) AS likes,
                         SUM(CASE WHEN Is_Like = 0 THEN 1 ELSE 0 END) AS dislikes
                         FROM ThreadLikes
                         WHERE Thread_ID = ?");

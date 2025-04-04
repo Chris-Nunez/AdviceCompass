@@ -36,9 +36,11 @@
         
                 <div class="collapse navbar-collapse" id="nav-collapse">
                     <div class="navbar-nav ms-auto">
-                        <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                        <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
+                            <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                        </a>
                         <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
-                        <a href="settings.html">
+                        <a href="settings.php">
                             <i class="bi bi-gear me-4" id="gear-icon"></i>
                         </a>
                         <a href="logout.php">   

@@ -32,6 +32,22 @@ while ($row = $result->fetch_assoc()) {
     $explore_usernames[] = $row['Username'];
 }
 
+$query = $conn->prepare("SELECT Threads.Thread_Title, Threads.Thread_Date_Time, Users.Username FROM FavoriteThreads
+                        INNER JOIN Threads ON FavoriteThreads.Thread_ID = Threads.Thread_ID
+                        INNER JOIN Users ON FavoriteThreads.User_ID = Users.User_ID
+                        WHERE FavoriteThreads.User_ID = ?
+                        ORDER BY Threads.Thread_Date_Time DESC LIMIT 3");
+$query->bind_param("i", $_SESSION['User_ID']);
+$query->execute();
+$result = $query->get_result();
+
+$favorited_threads = [];
+$favorited_threads_usernames = [];
+while ($row = $result->fetch_assoc()) {
+    $favorited_threads[] = $row['Thread_Title'];
+    $favorited_threads_usernames[] = $row['Username'];
+}
+
 $query->close();
 $conn->close();
 

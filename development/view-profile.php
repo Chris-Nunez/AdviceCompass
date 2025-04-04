@@ -8,14 +8,17 @@
     
     $user_id = intval($_GET['user_id']); 
     
-    $query = $conn->prepare("SELECT Users.*, 
-                    COUNT(DISTINCT Threads.Thread_ID) AS Thread_Count, 
-                    COUNT(DISTINCT ThreadComments.Thread_Comment_Id) AS Comment_Count
-                    FROM Users 
-                    LEFT JOIN Threads ON Users.User_ID = Threads.User_ID
-                    LEFT JOIN ThreadComments ON Threads.Thread_ID = ThreadComments.Thread_ID
-                    WHERE Users.User_ID = ?
-                    GROUP BY Users.User_ID");
+    $query = $conn->prepare("SELECT Users.*,
+                            COUNT(DISTINCT Threads.Thread_ID) AS Thread_Count, 
+                            COUNT(DISTINCT ThreadComments.Thread_Comment_Id) AS Comment_Count,
+                            COUNT(DISTINCT UserFollowers.Follower_ID) AS Follower_Count,
+                            COUNT(DISTINCT UserFollowers.Following_ID) AS Following_Count
+                            FROM Users 
+                            LEFT JOIN Threads ON Users.User_ID = Threads.User_ID
+                            LEFT JOIN ThreadComments ON Threads.Thread_ID = ThreadComments.Thread_ID
+                            LEFT JOIN UserFollowers ON Users.User_ID = UserFollowers.Following_ID
+                            WHERE Users.User_ID = ?
+                            GROUP BY Users.User_ID");
     $query->bind_param("i", $user_id);
     $query->execute();
     $result = $query->get_result();
@@ -33,6 +36,8 @@
     $bio_text = $user["Bio_Text"];
     $location_state = $user["Location_State"];
     $profile_image = $user["Profile_Image"];
+    $follower_count = $user["Follower_Count"];
+    $following_count = $user["Following_Count"];
     $thread_count = $user["Thread_Count"];
     $comment_count = $user["Comment_Count"];
     $year_created = $user["Year_Created"];
@@ -77,7 +82,9 @@
         
                 <div class="collapse navbar-collapse" id="nav-collapse">
                     <div class="navbar-nav ms-auto">
-                        <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                        <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
+                            <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                        </a>
                         <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
                         <a href="settings.php">
                             <i class="bi bi-gear me-4" id="gear-icon"></i>
@@ -141,13 +148,44 @@
                             </button>
                         <?php } ?>
                     </div>
-                    <div class="thread_count-container">
+                    <div class="follower-count-container">
+                        <div class="follower-count-title">
+                            Follower Count
+                        </div>
+                        <div class="follower-count">
+                            <?php echo htmlspecialchars($follower_count); ?>
+                        </div>
+                        <a href="view-followers.php?user_id=<?php echo htmlspecialchars($user_id); ?>">
+                            <button class="view-followers-button">
+                                View Followers
+                            </button>
+                        </a>
+                    </div>
+                    <div class="following-count-container">
+                        <div class="following-count-title">
+                            Following Count
+                        </div>
+                        <div class="following-count">
+                            <?php echo htmlspecialchars($following_count); ?>
+                        </div>
+                        <a href="view-following.php?user_id=<?php echo htmlspecialchars($user_id); ?>">
+                            <button class="view-following-button">
+                                View Following
+                            </button>
+                        </a>
+                    </div>
+                    <div class="thread-count-container">
                         <div class="thread-count-title">
                             Thread Count
                         </div>
                         <div class="thread-count">
                             <?php echo htmlspecialchars($thread_count); ?>
                         </div>
+                        <a href="view-user-threads.php?user_id=<?php echo htmlspecialchars($user_id); ?>">
+                            <button class="view-threads-button">
+                                View Threads
+                            </button>
+                        </a>
                     </div>
                     <div class="comment-count-container">
                         <div class="comment-count-title">

@@ -27,7 +27,9 @@
         
                 <div class="collapse navbar-collapse" id="nav-collapse">
                     <div class="navbar-nav ms-auto">
-                        <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                        <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
+                            <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                        </a>
                         <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
                         <a href="settings.php">
                             <i class="bi bi-gear me-4" id="gear-icon"></i>
@@ -49,12 +51,12 @@
                             View Profile <i class="bi bi-arrow-right"></i>
                         </button>
                     </a>
-                    <a href="view-followers.php">
+                    <a href="view-followers.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
                         <button class="settings-button" id="view-followers">
                             View Followers <i class="bi bi-arrow-right"></i>
                         </button>
                     </a>
-                    <a href="view-following.php">
+                    <a href="view-following.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
                         <button class="settings-button" id="view-following">
                             View Following <i class="bi bi-arrow-right"></i>
                         </button>

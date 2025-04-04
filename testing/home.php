@@ -31,11 +31,13 @@
                             <a href="index.html">
                                 <button class="navbar-login-button me-4">Login</button>
                             </a>
-                            <a href="register.html">
+                            <a href="register.php">
                                 <button class="navbar-signup-button">Sign Up</button>
                             </a>
                         <?php else: ?>
-                            <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                            <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
+                                <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                            </a>
                             <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
                             <a href="settings.php">
                                 <i class="bi bi-gear me-4" id="gear-icon"></i>
@@ -108,7 +110,29 @@
                     </div>
 
                     <div class="home-following-threads-container col col-7 col-lg-3">
+                        <div class="categories-container-title">
+                            <h2>Favorite Threads</h2>
+                        </div>
+                        <?php if (isset($_SESSION['User_ID']) || isset($_SESSION['Username'])): ?>
 
+                            <?php for ($i = 0; $i < count($favorited_threads); $i++): ?>
+                                <div class="home-category-box">
+                                    <div class="category-name">
+                                        <h4><?php echo htmlspecialchars($favorited_threads[$i]); ?></h4>
+                                    </div>
+                                    <div class="category-username">
+                                        Made by <?php echo htmlspecialchars($favorited_threads_usernames[$i]); ?>
+                                    </div>
+                                </div>
+                            <?php endfor; ?>
+
+                            <a href="favorite-threads.php" id="favorite-threads-button">
+                                <button class="home-thread-categories-button">Go -></button>
+                            </a>
+
+                        <?php else: ?>
+
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

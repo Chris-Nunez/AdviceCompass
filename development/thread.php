@@ -23,6 +23,21 @@
         die("Category not found.");
     }
 
+    $is_favorited = false;
+
+    if (isset($_SESSION['User_ID'])) {
+        $logged_in_user_id = $_SESSION['User_ID'];
+
+        $fav_query = $conn->prepare("SELECT * FROM FavoriteThreads WHERE User_ID = ? AND Thread_ID = ?");
+        $fav_query->bind_param("ii", $logged_in_user_id, $thread_id);
+        $fav_query->execute();
+        $fav_result = $fav_query->get_result();
+
+        if ($fav_result->num_rows > 0) {
+            $is_favorited = true;
+        }
+    }
+
     include 'fetch-comments.php';
 ?>
 
@@ -50,7 +65,9 @@
         
                 <div class="collapse navbar-collapse" id="nav-collapse">
                     <div class="navbar-nav ms-auto">
-                        <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                        <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
+                            <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                        </a>
                         <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
                         <a href="settings.php">
                             <i class="bi bi-gear me-4" id="gear-icon"></i>
@@ -69,26 +86,29 @@
                 <div class="top-container d-flex align-items-center justify-content-between">
             
                     <div class="d-flex align-items-center flex-1">
-
                         <a href="thread-category.php">
                             <button class="thread-category-back-button mx-2"><i class="bi bi-arrow-left"></i> Back</button>
                         </a>
 
-
-                        <button class="favorite-category-button mx-2" id="favorite-category-btn" thread-id="<?php echo $thread_id; ?>">
-                            <i class="bi bi-star"></i> Favorite
+                        <button class="favorite-thread-button mx-2 <?php echo $is_favorited ? 'favorited' : ''; ?>" 
+                                id="favorite-thread-btn" 
+                                thread-id="<?php echo $thread_id; ?>">
+                            <i class="bi <?php echo $is_favorited ? 'bi-star-fill' : 'bi-star'; ?>"></i> 
+                            <?php echo $is_favorited ? 'Favorited' : 'Favorite'; ?>
                         </button>
-                    </div>
 
-                    <div class="explore-categories-title flex-grow-1 text-center">
-                        <h1><?php echo htmlspecialchars($thread['Thread_Title']); ?></h1>
-                    </div>  
+
+                    </div>
 
                 </div>
 
-                <div class="explore-categories-title flex-grow-1 text-center">
+                <div class="explore-categories-title">
+                    <h1><?php echo htmlspecialchars($thread['Thread_Title']); ?></h1>
+                </div>  
+
+                <div class="explore-categories-title">
                     <h3>
-                        <a href="user-profile.php?user_id=<?php echo urlencode($thread['User_ID']); ?>">
+                        <a href="view-profile.php?user_id=<?php echo urlencode($thread['User_ID']); ?>">
                             <?php echo htmlspecialchars($thread['Username']); ?>
                         </a>
                     </h3>
@@ -145,11 +165,11 @@
                         </div>
 
                         <div class="thread-actions">
-                            <a href="comment_like.php?comment_id=<?php echo $comment_id[$i]; ?>&is_like=1" class="action-button like" id="like-btn-<?php echo $comment_id[$i]; ?>" data-comment-id="<?php echo $comment_id[$i]; ?>" data-is-like="1">
+                            <a href="comment-like.php?comment_id=<?php echo $comment_id[$i]; ?>&is_like=1" class="action-button like" id="like-btn-<?php echo $comment_id[$i]; ?>" data-comment-id="<?php echo $comment_id[$i]; ?>" data-is-like="1">
                                 <i class="bi bi-hand-thumbs-up"></i> <span id="like-count-<?php echo $comment_id[$i]; ?>"><?php echo $comment_like_count[$i]; ?></span>
                             </a>
 
-                            <a href="comment_like.php?comment_id=<?php echo $comment_id[$i]; ?>&is_like=0" class="action-button dislike" id="dislike-btn-<?php echo $comment_id[$i]; ?>" data-comment-id="<?php echo $comment_id[$i]; ?>" data-is-like="0">
+                            <a href="comment-like.php?comment_id=<?php echo $comment_id[$i]; ?>&is_like=0" class="action-button dislike" id="dislike-btn-<?php echo $comment_id[$i]; ?>" data-comment-id="<?php echo $comment_id[$i]; ?>" data-is-like="0">
                                 <i class="bi bi-hand-thumbs-down"></i> <span id="dislike-count-<?php echo $comment_id[$i]; ?>"><?php echo $comment_dislike_count[$i]; ?></span>
                             </a>
 
@@ -172,8 +192,6 @@
                         <!-- Replies will be loaded dynamically here -->
                     </div>
 
-
-
                 <?php } ?>
 
             </div>
@@ -188,6 +206,48 @@
         </section>
 
         <script>
+
+            document.addEventListener("DOMContentLoaded", function() {
+                let button = document.getElementById('favorite-thread-btn');
+                
+                if (button.classList.contains('favorited')) {
+                    button.innerHTML = '<i class="bi bi-star-fill"></i> Favorited';
+                } else {
+                    button.innerHTML = '<i class="bi bi-star"></i> Favorite';
+                }
+
+                button.addEventListener('click', function() {
+                    let threadId = parseInt(this.getAttribute('thread-id'), 10);
+                    
+                    if (!threadId) {
+                        console.error("Error: thread_id is missing.");
+                        return;
+                    }
+
+                    fetch('favorite-thread-process.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: 'thread_id=' + encodeURIComponent(threadId)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            if (button.classList.contains('favorited')) {
+                                button.innerHTML = '<i class="bi bi-star"></i> Favorite';
+                                button.classList.remove('favorited');
+                            } else {
+                                button.innerHTML = '<i class="bi bi-star-fill"></i> Favorited';
+                                button.classList.add('favorited');
+                            }
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            });
+
+
 
             document.addEventListener("DOMContentLoaded", function () {
                 function handleVote(buttonClass) {
@@ -269,10 +329,10 @@
                                 <p>${data.comment_date_time}</p>
                             </div>
                             <div class="thread-actions">
-                                <a href="like.php?comment_id=${data.comment_id}" class="action-button like">
+                                <a href="comment-like.php?comment_id=${data.comment_id}" class="action-button like">
                                     <i class="bi bi-hand-thumbs-up"></i> 0
                                 </a>
-                                <a href="dislike.php?comment_id=${data.comment_id}" class="action-button dislike">
+                                <a href="comment-like.php?comment_id=${data.comment_id}" class="action-button dislike">
                                     <i class="bi bi-hand-thumbs-down"></i> 0
                                 </a>
                                 <button class="action-button comment reply-button" data-comment-id="${data.comment_id}">
@@ -303,26 +363,38 @@
             });
 
             document.addEventListener("DOMContentLoaded", function () {
-                // Like/Dislike button event listeners
                 document.querySelectorAll(".action-button.like, .action-button.dislike").forEach(button => {
                     button.addEventListener("click", function (event) {
                         event.preventDefault(); // Prevent default link behavior
 
-                        let commentId = this.dataset.commentId;
-                        let isLike = this.dataset.isLike; // 1 for like, 0 for dislike
+                        // Disable the button to prevent further clicks until the request finishes
+                        this.disabled = true;
 
-                        fetch("comment_like.php?comment_id=" + commentId + "&is_like=" + isLike)
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    // Update the like/dislike counts dynamically
-                                    document.getElementById("like-count-" + commentId).textContent = data.likes;
-                                    document.getElementById("dislike-count-" + commentId).textContent = data.dislikes;
-                                } else {
-                                    alert("Error: " + data.message);
-                                }
-                            })
-                            .catch(error => console.error("Error:", error));
+                        let commentId = this.dataset.commentId;
+                        let isLike = parseInt(this.dataset.isLike, 10); // Convert to integer
+
+                        fetch("comment-like.php", {
+                            method: "POST", // Use POST
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded",
+                            },
+                            body: `comment_id=${commentId}&is_like=${isLike}`
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Update the like/dislike counts dynamically
+                                document.getElementById("like-count-" + commentId).textContent = data.likes;
+                                document.getElementById("dislike-count-" + commentId).textContent = data.dislikes;
+                            } else {
+                                alert("Error: " + data.message);
+                            }
+                        })
+                        .catch(error => console.error("Error:", error))
+                        .finally(() => {
+                            // Re-enable the button after the request is finished
+                            this.disabled = false;
+                        });
                     });
                 });
             });
@@ -422,10 +494,10 @@
                                             <div class="reply-text"><p>${reply.text}</p></div>
                                             <div class="reply-date-time"><p>${reply.date_time}</p></div>
                                             <div class="reply-actions">
-                                                <a href="#" class="action-button like" data-reply-id="${reply.reply_id}">
+                                                <a href="#" class="action-button like" data-reply-id="${reply.reply_id}" data-is-like="1">
                                                     <i class="bi bi-hand-thumbs-up"></i><span id="like-count-${reply.reply_id}">${reply.like_count}</span>
                                                 </a>
-                                                <a href="#" class="action-button dislike" data-reply-id="${reply.reply_id}">
+                                                <a href="#" class="action-button dislike" data-reply-id="${reply.reply_id}" data-is-like="0">
                                                     <i class="bi bi-hand-thumbs-down"></i><span id="dislike-count-${reply.reply_id}">${reply.dislike_count}</span>
                                                 </a>
                                             </div>
@@ -445,31 +517,32 @@
             });
 
             // Like and dislike functionality for replies
-            document.querySelectorAll('.action-button.like, .action-button.dislike').forEach(function(button) {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault(); // Prevent the default link behavior
+            document.addEventListener("click", function (event) {
+                if (event.target.closest(".action-button.like") || event.target.closest(".action-button.dislike")) {
+                    event.preventDefault();
 
-                    let replyId = this.dataset.replyId;  // Get the reply ID from data attribute
-                    let isLike = this.classList.contains('like') ? 1 : 0; // Determine if it's like or dislike
+                    let button = event.target.closest(".action-button");
+                    let replyId = button.dataset.replyId;
+                    let isLike = button.dataset.isLike;
 
-                    // Send an AJAX POST request to handle like/dislike
-                    fetch('reply-like.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: `reply_id=${encodeURIComponent(replyId)}&is_like=${encodeURIComponent(isLike)}`
+                    fetch("reply-like.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body: `reply_id=${replyId}&is_like=${isLike}`
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            // Update the like and dislike counts dynamically
-                            document.getElementById(`like-count-${replyId}`).textContent = data.likes;
-                            document.getElementById(`dislike-count-${replyId}`).textContent = data.dislikes;
+                            document.getElementById("like-count-" + replyId).textContent = data.likes;
+                            document.getElementById("dislike-count-" + replyId).textContent = data.dislikes;
                         } else {
                             alert("Error: " + data.message);
                         }
                     })
-                    .catch(error => console.error('Error:', error));
-                });
+                    .catch(error => console.error("Fetch error:", error));
+                }
             });
 
         </script>

@@ -22,6 +22,22 @@
         die("Category not found.");
     }
 
+    $is_favorited = false;
+
+    if (isset($_SESSION['User_ID'])) {
+        $logged_in_user_id = $_SESSION['User_ID'];
+
+        $fav_query = $conn->prepare("SELECT * FROM UserPreferredCategories WHERE User_ID = ? AND Industry_Thread_Category_ID = ?");
+        $fav_query->bind_param("ii", $logged_in_user_id, $category_id);
+        $fav_query->execute();
+        $fav_result = $fav_query->get_result();
+
+        if ($fav_result->num_rows > 0) {
+            $is_favorited = true;
+        }
+    }
+
+
     // Include thread-category-data.php to fetch threads
     include 'thread-category-data.php';
 ?>
@@ -40,7 +56,7 @@
 
         <nav class="navbar navbar-expand-md fixed-top" style="background-color: #303030;">
             <div class="container">
-                <a href="#home" class="navbar-brand text-white">
+                <a href="home.php" class="navbar-brand text-white">
                     <h1 class="text-white mb-0">AdviceCompass</h1>
                 </a>
         
@@ -50,9 +66,11 @@
         
                 <div class="collapse navbar-collapse" id="nav-collapse">
                     <div class="navbar-nav ms-auto">
-                        <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                        <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
+                            <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                        </a>
                         <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
-                        <a href="settings.html">
+                        <a href="settings.php">
                             <i class="bi bi-gear me-4" id="gear-icon"></i>
                         </a>
                         <a href="logout.php">   
@@ -78,13 +96,10 @@
                             <button class="create-thread-button mx-2"><i class="bi bi-plus-lg"></i> Create Thread</button>
                         </a>
 
-                        <button class="favorite-category-button mx-2" id="favorite-category-btn" category-id="<?php echo $category_id; ?>">
-                            <i class="bi bi-star"></i> Favorite
+                        <button class="favorite-category-button mx-2 <?= $is_favorited ? 'favorited' : '' ?>" id="favorite-category-btn" category-id="<?php echo $category_id; ?>">
+                            <i class="bi <?= $is_favorited ? 'bi-star-fill' : 'bi-star' ?>"></i> <?= $is_favorited ? 'Favorited' : 'Favorite' ?>
                         </button>
-                    </div>
 
-                    <div class="explore-categories-title">
-                        <h1><?php echo htmlspecialchars($category['Industry_Thread_Category_Name']); ?></h1>
                     </div>
 
                     <div class="search-container flex-1 d-flex justify-content-end">
@@ -93,9 +108,13 @@
 
                 </div>
 
-                <div class="row mt-5">
+                <div class="explore-categories-title">
+                    <h1><?php echo htmlspecialchars($category['Industry_Thread_Category_Name']); ?></h1>
+                </div>
+
+                <div class="row mt-5" id="threads-container">
                     <?php
-                    // Loop through the categories and create Bootstrap columns
+                    // Loop through and display all threads initially
                     for ($i = 0; $i < count($thread_id); $i++) {
                     ?>
                         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
@@ -127,6 +146,7 @@
                         </div>
                     <?php } ?>
                 </div>
+
 
             </div>
         </section>
@@ -165,6 +185,24 @@
                 })
                 .catch(error => console.error('Error:', error));
             });
+
+            document.getElementById('thread-search').addEventListener('input', function () {
+                let searchQuery = this.value.trim();
+
+                let categoryId = <?php echo $category_id; ?>;
+
+                let xhr = new XMLHttpRequest();
+                xhr.open('GET', 'search-threads.php?query=' + encodeURIComponent(searchQuery) + '&category_id=' + categoryId, true);
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        document.getElementById('threads-container').innerHTML = xhr.responseText;
+                    }
+                };
+
+                xhr.send();
+            });
+
         </script>
 
 

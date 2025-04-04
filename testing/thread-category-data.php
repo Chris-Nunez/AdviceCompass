@@ -12,7 +12,8 @@ $category_id = intval($_GET['category_id']);
 $query = $conn->prepare("SELECT Threads.Thread_ID, Threads.Thread_Title, Threads.Thread_Text, DATE(Threads.Thread_Date_Time) AS Thread_Date, Users.Username, Users.User_ID 
                         FROM Threads 
                         INNER JOIN Users ON Threads.User_ID = Users.User_ID
-                        WHERE Threads.Industry_Thread_Category_ID = ?");
+                        WHERE Threads.Industry_Thread_Category_ID = ?
+                        ORDER BY Threads.Thread_Date_Time DESC");
 $query->bind_param("i", $category_id);
 $query->execute();
 $result = $query->get_result();
