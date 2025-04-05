@@ -44,6 +44,15 @@
 
         <section id="settings">
             <div class="settings-container">
+                <div class="top-container d-flex align-items-center justify-content-between">
+            
+                    <!-- Left Section: Back & Create Category Buttons -->
+                    <div class="d-flex align-items-center flex-1">
+                        <button class="explore-categories-back-button mx-2" onclick="history.back();">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
+                    </div>
+                </div>
                 <h2 id="settings-title">Settings</h2>
                 <div class="settings-box">
                     <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
@@ -59,6 +68,11 @@
                     <a href="view-following.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
                         <button class="settings-button" id="view-following">
                             View Following <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </a>
+                    <a href="search-users.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
+                        <button class="settings-button" id="search-users">
+                            Search Users <i class="bi bi-arrow-right"></i>
                         </button>
                     </a>
                     <a href="favorite-thread-categories.php">

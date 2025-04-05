@@ -1,6 +1,6 @@
 <?php
-    session_start();
-    include 'config.php';
+session_start();
+include 'config.php';
 ?>
 
 <!DOCTYPE html>
@@ -8,7 +8,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Settings</title>
+        <title>View Followers</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <link rel="stylesheet" href="styles.css">
@@ -42,57 +42,28 @@
             </div>
         </nav>
 
-        <section id="settings">
-            <div class="settings-container">
+        <section id="users">
+            <div class="main-container">
                 <div class="top-container d-flex align-items-center justify-content-between">
-            
+                
                     <!-- Left Section: Back & Create Category Buttons -->
                     <div class="d-flex align-items-center flex-1">
                         <button class="explore-categories-back-button mx-2" onclick="history.back();">
                             <i class="bi bi-arrow-left"></i> Back
                         </button>
                     </div>
+
+                    <!-- Right Section: Search Bar -->
+                    <div class="search-container flex-1 d-flex justify-content-end">
+                        <input type="text" class="form-control mx-2" placeholder="Search users..." id="user-search" style="width: 250px;">
+                    </div>
+
                 </div>
-                <h2 id="settings-title">Settings</h2>
-                <div class="settings-box">
-                    <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
-                        <button class="settings-button" id="view-profile">
-                            View Profile <i class="bi bi-arrow-right"></i>
-                        </button>
-                    </a>
-                    <a href="view-followers.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
-                        <button class="settings-button" id="view-followers">
-                            View Followers <i class="bi bi-arrow-right"></i>
-                        </button>
-                    </a>
-                    <a href="view-following.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
-                        <button class="settings-button" id="view-following">
-                            View Following <i class="bi bi-arrow-right"></i>
-                        </button>
-                    </a>
-                    <a href="search-users.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
-                        <button class="settings-button" id="search-users">
-                            Search Users <i class="bi bi-arrow-right"></i>
-                        </button>
-                    </a>
-                    <a href="favorite-thread-categories.php">
-                        <button class="settings-button" id="view-favorite-categories">
-                            View Favorite Categories <i class="bi bi-arrow-right"></i>
-                        </button>
-                    </a>
-                    <a href="favorite-threads.php">
-                        <button class="settings-button" id="view-favorite-threads">
-                            View Favorite Threads <i class="bi bi-arrow-right"></i>
-                        </button>
-                    </a>
-                    <a href="logout.php">
-                        <button class="settings-button" id="logout">
-                            Logout <i class="bi bi-arrow-right"></i>
-                        </button>
-                    </a>
-                </div>
+                <h2 id="followers-title">Users</h2>
+                <div class="row" id="search-results"></div>
             </div>
         </section>
+
 
         <section id="footer-section">
             <div class="footer-container">
@@ -101,6 +72,23 @@
               </div>
             </div>
         </section>
+
+        <script>
+            document.getElementById('user-search').addEventListener('input', function () {
+                let searchQuery = this.value.trim();
+
+                let xhr = new XMLHttpRequest();
+                xhr.open('GET', 'search-users-process.php?query=' + encodeURIComponent(searchQuery), true);
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        document.getElementById('search-results').innerHTML = xhr.responseText;
+                    }
+                };
+
+                xhr.send();
+            });
+        </script>
 
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

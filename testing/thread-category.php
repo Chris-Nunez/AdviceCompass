@@ -88,9 +88,9 @@
             
                     <div class="d-flex align-items-center flex-1">
 
-                        <a href="<?= htmlspecialchars($backUrl) ?>">
-                            <button class="thread-category-back-button mx-2"><i class="bi bi-arrow-left"></i> Back</button>
-                        </a>
+                        <button class="explore-categories-back-button mx-2" onclick="history.back();">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
 
                         <a href="create-thread.php?category_id=<?php echo urlencode($category_id); ?>">
                             <button class="create-thread-button mx-2"><i class="bi bi-plus-lg"></i> Create Thread</button>

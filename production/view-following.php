@@ -74,6 +74,21 @@ $conn->close();
 
         <section id="following">
             <div class="main-container">
+                <div class="top-container d-flex align-items-center justify-content-between">
+                    
+                    <!-- Left Section: Back & Create Category Buttons -->
+                    <div class="d-flex align-items-center flex-1">
+                        <button class="explore-categories-back-button mx-2" onclick="history.back();">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
+                    </div>
+
+                    <!-- Right Section: Search Bar -->
+                    <div class="search-container flex-1 d-flex justify-content-end">
+                        <input type="text" class="form-control mx-2" placeholder="Search categories..." id="category-search" style="width: 250px;">
+                    </div>
+
+                </div>
                 <h2 id="following-title">Following</h2>
                 <div class="row mt-5">
                     <?php if (count($following_user_id) > 0) { ?>

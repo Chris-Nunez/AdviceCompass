@@ -51,9 +51,10 @@
             
                     <!-- Left Section: Back & Create Category Buttons -->
                     <div class="d-flex align-items-center flex-1">
-                        <a href="home.php">
-                            <button class="explore-categories-back-button mx-2"><i class="bi bi-arrow-left"></i> Back</button>
-                        </a>
+                        <button class="explore-categories-back-button mx-2" onclick="history.back();">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
+
                         <a href="create-category.php">
                             <button class="create-category-button mx-2"><i class="bi bi-plus-lg"></i> Create Category</button>
                         </a>

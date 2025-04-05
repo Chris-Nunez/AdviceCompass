@@ -43,6 +43,16 @@
         </nav>
 
         <section id="create-category">
+            <div class="top-container d-flex align-items-center justify-content-between">
+                
+                <!-- Left Section: Back & Create Category Buttons -->
+                <div class="d-flex align-items-center flex-1">
+                    <button class="explore-categories-back-button mx-2" onclick="history.back();">
+                        <i class="bi bi-arrow-left"></i> Back
+                    </button>
+                </div>
+
+            </div>
             <h2 id="create-category-title">Create Category</h2>
             <div class="create-category-container">
                 <div id="errormessage" style="color:red;"></div>  
