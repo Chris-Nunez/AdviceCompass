@@ -96,10 +96,12 @@
                             <i class="bi <?php echo $is_favorited ? 'bi-star-fill' : 'bi-star'; ?>"></i> 
                             <?php echo $is_favorited ? 'Favorited' : 'Favorite'; ?>
                         </button>
-
-
+                        <?php if (isset($_SESSION['User_ID']) && $_SESSION['User_ID'] == $thread['User_ID']): ?>
+                            <button class="delete-thread-button mx-2" id="delete-thread-btn" data-thread-id="<?php echo $thread_id; ?>">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        <?php endif; ?>
                     </div>
-
                 </div>
 
                 <div class="explore-categories-title">
@@ -247,7 +249,37 @@
                 });
             });
 
-
+            document.addEventListener("DOMContentLoaded", () => {
+                const deleteBtn = document.getElementById("delete-thread-btn");
+                if (deleteBtn) {
+                    deleteBtn.addEventListener("click", () => {
+                        const threadId = deleteBtn.getAttribute("data-thread-id");
+                        if (confirm("Are you sure you want to delete this thread?")) {
+                            fetch("delete-thread.php", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/x-www-form-urlencoded"
+                                },
+                                body: "thread_id=" + encodeURIComponent(threadId)
+                            })
+                            .then(response => response.text())
+                            .then(data => {
+                                if (data.startsWith("success:")) {
+                                    const categoryId = data.split(":")[1];
+                                    alert("Thread deleted successfully.");
+                                    window.location.href = "thread-category.php?category_id=" + encodeURIComponent(categoryId);
+                                } else {
+                                    alert(data);
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error deleting thread:", error);
+                                alert("Something went wrong.");
+                            });
+                        }
+                    });
+                }
+            });
 
             document.addEventListener("DOMContentLoaded", function () {
                 function handleVote(buttonClass) {
