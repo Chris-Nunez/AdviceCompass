@@ -56,87 +56,141 @@
                 <div id="home-title">
                     <h1>Home</h1>
                 </div>
-                <div class="row mt-5">
-                    <div class="home-preferred-categories-container col col-7 col-lg-3">
-                        <div class="categories-container-title">
-                            <h2>Favorited Thread Categories</h2>
+                <div class="row">
+                    <!-- LEFT: Explore Categories -->
+                    <div class="col-12 col-lg-6">
+                        <div class="home-container">
+                            
+                            <div class="home-explore-categories-title">
+                                <h2>Explore Page</h2>
+                                <h5>View the latest thread categories!</h5>
+                            </div>
+                            <div class="row mt-5" id="categories-container">
+                                <?php for ($i = 0; $i < count($explore_categories); $i++) { ?>
+                                    <div class="col-12 col-sm-6 col-md-6 category-item">
+                                        <div class="explore-categories-container">
+                                            <div class="category-name">
+                                                <h5><?php echo htmlspecialchars($explore_categories[$i]); ?></h5>
+                                            </div>
+                                            <div class="category-username">
+                                                <p>Made by: 
+                                                    <a href="view-profile.php?user_id=<?php echo urlencode($explore_user_id[$i]); ?>">
+                                                        <?php echo htmlspecialchars($explore_usernames[$i]); ?>
+                                                    </a>
+                                                </p>
+                                            </div>
+                                            <div class="category-thread-count">
+                                                <p><?php echo htmlspecialchars($explore_thread_count[$i]); ?> Total Threads</p>
+                                            </div>
+                                            <div class="category-year-created">
+                                                <p>Created <?php echo htmlspecialchars($explore_category_year[$i]); ?></p>
+                                            </div>
+                                            <a href="thread-category.php?category_id=<?php echo urlencode($explore_category_id[$i]); ?>">
+                                                <button class="explore-thread-categories-button">Go <i class="bi bi-arrow-right"></i></button>
+                                            </a>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                            <div class="view-explore-page-button">
+                                <a href="explore-thread-categories.php" id="explore-categories-button">
+                                    <button class="home-thread-categories-button">View Explore Page</button>
+                                </a>
+                            </div>
                         </div>
-                        <?php if (isset($_SESSION['User_ID']) || isset($_SESSION['Username'])): ?>
-
-                            <?php for ($i = 0; $i < count($preferred_categories); $i++): ?>
-                                <div class="home-category-box">
-                                    <div class="category-name">
-                                        <h4><?php echo htmlspecialchars($preferred_categories[$i]); ?></h4>
-                                    </div>
-                                    <div class="category-username">
-                                        Made by <?php echo htmlspecialchars($preferred_categories_usernames[$i]); ?>
-                                    </div>
-                                </div>
-                            <?php endfor; ?>
-
-                            <a href="favorite-thread-categories.php">
-                                <button class="home-thread-categories-button">Go -></button>
-                            </a>
-
-                        <?php else: ?>
-
-                        <?php endif; ?>
                     </div>
 
-                    <div class="home-explore-categories-container col col-7 col-lg-3">
-                        <div class="categories-container-title">
-                            <h2>Explore Thread Categories</h2>
+                    <!-- RIGHT: Favorite Categories -->
+                    <div class="col-12 col-lg-6">
+                        <div class="home-container">
+                            <div class="home-favorite-categories-title">
+                                <h2>Favorite Thread Categories</h2>
+                                <h5>View your favorited categories!</h5>
+                            </div>
+                            <div class="row mt-5" id="categories-container">
+                                <?php for ($i = 0; $i < count($favorite_categories); $i++) { ?>
+                                    <div class="col-12 col-sm-6 col-md-6">
+                                        <div class="explore-categories-container">
+                                            <div class="category-name">
+                                                <h5><?php echo htmlspecialchars($favorite_categories[$i]); ?></h5>
+                                            </div>
+                                            <div class="category-username">
+                                                <p>Made by: 
+                                                    <a href="view-profile.php?user_id=<?php echo urlencode($favorite_categories_user_ids[$i]); ?>">
+                                                        <?php echo htmlspecialchars($favorite_categories_usernames[$i]); ?>
+                                                    </a>
+                                                </p>
+                                            </div>
+                                            <div class="category-thread-count">
+                                                <p><?php echo htmlspecialchars($favorite_categories_thread_count[$i]); ?> Total Threads</p>
+                                            </div>
+                                            <div class="category-year-created">
+                                                <p>Created <?php echo htmlspecialchars($favorite_categories_year[$i]); ?></p>
+                                            </div>
+                                            <a href="thread-category.php?category_id=<?php echo urlencode($favorite_categories_id[$i]); ?>">
+                                                <button class="explore-thread-categories-button">Go <i class="bi bi-arrow-right"></i></button>
+                                            </a>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                            <div class="view-explore-page-button">
+                                <a href="favorite-thread-categories.php" id="explore-categories-button">
+                                    <button class="home-thread-categories-button">View Favorite Categories</button>
+                                </a>
+                            </div>
                         </div>
-                        <?php if (isset($_SESSION['User_ID']) || isset($_SESSION['Username'])): ?>
-
-                            <?php for ($i = 0; $i < count($explore_categories); $i++): ?>
-                                <div class="home-category-box">
-                                    <div class="category-name">
-                                        <h4><?php echo htmlspecialchars($explore_categories[$i]); ?></h4>
-                                    </div>
-                                    <div class="category-username">
-                                        Made by <?php echo htmlspecialchars($explore_usernames[$i]); ?>
-                                    </div>
-                                </div>
-                            <?php endfor; ?>
-
-                            <a href="explore-thread-categories.php" id="explore-categories-button">
-                                <button class="home-thread-categories-button">Go -></button>
-                            </a>
-
-                        <?php else: ?>
-
-                        <?php endif; ?>
                     </div>
+                </div>
 
-                    <div class="home-following-threads-container col col-7 col-lg-3">
-                        <div class="categories-container-title">
-                            <h2>Favorite Threads</h2>
+                <!-- BELOW: Favorite Threads (Left Half Only) -->
+                <div class="row mt-4">
+                    <div class="col-12 col-lg-6">
+                        <div class="home-container">
+                            <div class="home-favorite-threads-title">
+                                <h2>Favorite Threads</h2>
+                            </div>
+                            <div class="row mt-5" id="threads-container">
+                                <?php for ($i = 0; $i < count($favorite_threads); $i++) { ?>
+                                    <div class="col-12 col-sm-6 col-md-6">
+                                        <div class="explore-categories-container">
+                                            <div class="thread-title">
+                                                <h5><?php echo htmlspecialchars($favorite_threads[$i]); ?></h5>
+                                            </div>
+                                            <div class="thread-username">
+                                                <p>Made by: 
+                                                    <a href="view-profile.php?user_id=<?php echo urlencode($favorite_thread_user_ids[$i]); ?>">
+                                                        <?php echo htmlspecialchars($favorite_threads_usernames[$i]); ?>
+                                                    </a>
+                                                </p>
+                                            </div>
+                                            <div class="thread-category">
+                                                <p>Category: <?php echo htmlspecialchars($favorite_thread_category[$i]); ?></p>
+                                            </div>
+                                            <div class="thread-text">
+                                                <p><?php echo htmlspecialchars($favorite_thread_text[$i]); ?></p>
+                                            </div>
+                                            <div class="thread-year-created">
+                                                <p>Created <?php echo htmlspecialchars($favorite_thread_year[$i]); ?></p>
+                                            </div>
+                                            <a href="thread.php?thread_id=<?php echo urlencode($favorite_thread_id[$i]); ?>">
+                                                <button class="explore-thread-categories-button">Go <i class="bi bi-arrow-right"></i></button>
+                                            </a>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                            <div class="view-explore-page-button">
+                                <a href="favorite-threads.php" id="explore-categories-button">
+                                    <button class="home-thread-categories-button">View Favorite Threads</button>
+                                </a>
+                            </div>
                         </div>
-                        <?php if (isset($_SESSION['User_ID']) || isset($_SESSION['Username'])): ?>
-
-                            <?php for ($i = 0; $i < count($favorited_threads); $i++): ?>
-                                <div class="home-category-box">
-                                    <div class="category-name">
-                                        <h4><?php echo htmlspecialchars($favorited_threads[$i]); ?></h4>
-                                    </div>
-                                    <div class="category-username">
-                                        Made by <?php echo htmlspecialchars($favorited_threads_usernames[$i]); ?>
-                                    </div>
-                                </div>
-                            <?php endfor; ?>
-
-                            <a href="favorite-threads.php" id="favorite-threads-button">
-                                <button class="home-thread-categories-button">Go -></button>
-                            </a>
-
-                        <?php else: ?>
-
-                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </section>
+
 
         <section id="footer-section">
             <div class="footer-container">

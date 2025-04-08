@@ -32,10 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $reply_date_time = date("Y-m-d H:i:s");
 
         // Update Thread_Comment_Reply_Count in ThreadComments table
-        $query = $conn->prepare("UPDATE ThreadComments SET Thread_Comment_Reply_Count = Thread_Comment_Reply_Count + 1 WHERE Thread_Comment_ID = ?");
-        $query->bind_param("i", $comment_id);
-        $query->execute();
-        $query->close();
+        $update_query = $conn->prepare("UPDATE ThreadComments SET Thread_Comment_Reply_Count = Thread_Comment_Reply_Count + 1 WHERE Thread_Comment_ID = ?");
+        $update_query->bind_param("i", $comment_id);
+        $update_query->execute();
+        $update_query->close(); // Close the update query after execution
 
         echo json_encode([
             "success" => true,
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(["success" => false, "message" => "Failed to post reply."]);
     }
 
-    $query->close();
-    $conn->close();
+    $query->close(); // Close the insert query after execution
+    $conn->close(); // Close the database connection
 }
 ?>

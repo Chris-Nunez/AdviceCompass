@@ -30,6 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $query = $conn->prepare("UPDATE Threads SET Thread_Comment_Count = Thread_Comment_Count + 1 WHERE Thread_ID = ?");
         $query->bind_param("i", $thread_id);
         $query->execute();
+
+        // No need to close the second query
         $query->close();
 
         echo json_encode([
@@ -44,10 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "comment_reply_count" => 0
         ]);
     } else {
+        // Log error in case of failure
+        error_log('Error executing query: ' . $query->error);  // Log the error
         echo json_encode(["success" => false, "message" => "Failed to post comment."]);
     }
 
-    $query->close();
     $conn->close();
 }
 

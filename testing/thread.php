@@ -86,9 +86,9 @@
                 <div class="top-container d-flex align-items-center justify-content-between">
             
                     <div class="d-flex align-items-center flex-1">
-                        <a href="thread-category.php">
-                            <button class="thread-category-back-button mx-2"><i class="bi bi-arrow-left"></i> Back</button>
-                        </a>
+                        <button class="explore-categories-back-button mx-2" onclick="history.back();">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
 
                         <button class="favorite-thread-button mx-2 <?php echo $is_favorited ? 'favorited' : ''; ?>" 
                                 id="favorite-thread-btn" 
@@ -341,57 +341,16 @@
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: 'thread_id=' + encodeURIComponent(threadId) + '&comment_text=' + encodeURIComponent(commentText)
                 })
-                .then(response => response.json())
+                .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        let commentContainer = document.querySelector('.comments-container');
-
-                        // Create a new comment element
-                        let newComment = document.createElement('div');
-                        newComment.classList.add('comments-container'); // Ensure it matches existing styles
-
-                        newComment.innerHTML = `
-                            <div class="comment-username">
-                                <p>${data.username}</p>
-                            </div>
-                            <div class="comment">
-                                <p>${data.comment_text}</p>
-                            </div>
-                            <div class="comment-date-time">
-                                <p>${data.comment_date_time}</p>
-                            </div>
-                            <div class="thread-actions">
-                                <a href="comment-like.php?comment_id=${data.comment_id}" class="action-button like">
-                                    <i class="bi bi-hand-thumbs-up"></i> 0
-                                </a>
-                                <a href="comment-like.php?comment_id=${data.comment_id}" class="action-button dislike">
-                                    <i class="bi bi-hand-thumbs-down"></i> 0
-                                </a>
-                                <button class="action-button comment reply-button" data-comment-id="${data.comment_id}">
-                                    <i class="bi bi-chat-dots"></i> ${data.comment_reply_count}
-                                </button>
-                                <button class="view-replies-btn" data-comment-id="${data.comment_id}">View Replies</button>
-                            </div>
-                        `;
-
-                        if (commentContainer) {
-                            commentContainer.parentNode.insertBefore(newComment, commentContainer);
-                        } else {
-                            // If no comments exist yet, add it under the thread
-                            let threadContainer = document.querySelector('.thread');
-                            threadContainer.parentNode.insertBefore(newComment, threadContainer.nextSibling);
-                        }
-
-                        // Clear input field
-                        document.getElementById('comment-text').value = '';
-
-                        // Hide comment box
-                        document.getElementById('comment-box').style.display = 'none';
+                        location.reload(); // ✅ Reloads the page
                     } else {
                         alert('Error: ' + data.message);
                     }
                 })
                 .catch(error => console.error('Error:', error));
+
             });
 
             document.addEventListener("DOMContentLoaded", function () {
@@ -462,39 +421,16 @@
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         body: 'comment_id=' + encodeURIComponent(commentId) + '&reply_text=' + encodeURIComponent(replyText)
                     })
-                    .then(response => response.json())
+                    .then(res => res.json())
                     .then(data => {
                         if (data.success) {
-                            let repliesContainer = document.getElementById('replies-' + commentId);
-
-                            // Create a new reply element
-                            let newReply = document.createElement('div');
-                            newReply.classList.add('reply');
-                            newReply.innerHTML = `
-                                <div class="reply-username">
-                                    <p>${data.username}</p>
-                                </div>
-                                <div class="reply-text">
-                                    <p>${data.reply_text}</p>
-                                </div>
-                                <div class="reply-date-time">
-                                    <p>${data.reply_date_time}</p>
-                                </div>
-                            `;
-
-                            // Add the new reply to the replies container
-                            repliesContainer.appendChild(newReply);
-
-                            // Clear the reply input field
-                            document.getElementById('reply-text-' + commentId).value = '';
-
-                            // Optionally hide the reply box after submission
-                            document.getElementById('reply-box-' + commentId).style.display = 'none';
+                            location.reload(); // ✅ Reloads the page
                         } else {
                             alert('Error: ' + data.message);
                         }
                     })
                     .catch(error => console.error('Error:', error));
+
                 });
             });
 
