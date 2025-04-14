@@ -1,7 +1,6 @@
 <?php
     session_start();
     include 'config.php';
-    $backUrl = $_SESSION['last_page'] ?? 'explore-thread-categories.php';
 
     // Check if category_id exists
     if (!isset($_GET['category_id'])) {
@@ -113,41 +112,46 @@
                 </div>
 
                 <div class="row mt-5" id="threads-container">
-                    <?php
-                    // Loop through and display all threads initially
-                    for ($i = 0; $i < count($thread_id); $i++) {
-                    ?>
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                            <div class="thread-container">
-                                <div class="thread-title">
-                                    <h5><?php echo htmlspecialchars($thread_title[$i]); ?></h5>
-                                </div>
+                    <?php if (count($thread_id) > 0) { ?>
+                        <?php for ($i = 0; $i < count($thread_id); $i++) { ?>
+                        
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                                <div class="thread-container">
+                                    <div class="thread-title">
+                                        <h5><?php echo htmlspecialchars($thread_title[$i]); ?></h5>
+                                    </div>
 
-                                <div class="thread-username">
-                                    <p>Made by: 
-                                        <a href="view-profile.php?user_id=<?php echo urlencode($thread_user_id[$i]); ?>">
-                                            <?php echo htmlspecialchars($thread_username[$i]); ?>
-                                        </a>
-                                    </p>
-                                </div>
+                                    <div class="thread-username">
+                                        <p>Made by: 
+                                            <a href="view-profile.php?user_id=<?php echo urlencode($thread_user_id[$i]); ?>">
+                                                <?php echo htmlspecialchars($thread_username[$i]); ?>
+                                            </a>
+                                        </p>
+                                    </div>
 
-                                <div class="thread-text">
-                                    <p><?php echo htmlspecialchars($thread_text[$i]); ?></p>
-                                </div>
+                                    <div class="thread-text">
+                                        <p><?php echo htmlspecialchars(mb_strimwidth($thread_text[$i], 0, 27, '...')); ?></p>
+                                    </div>
 
-                                <div class="thread-year-created">
-                                    <p>Created <?php echo htmlspecialchars($thread_date[$i]); ?></p>
-                                </div>
+                                    <div class="thread-year-created">
+                                        <p>Created <?php echo htmlspecialchars($thread_date[$i]); ?></p>
+                                    </div>
 
-                                <a href="thread.php?thread_id=<?php echo urlencode($thread_id[$i]); ?>">
-                                    <button class="thread-button">Go <i class="bi bi-arrow-right"></i></button>
-                                </a>
+                                    <a href="thread.php?thread_id=<?php echo urlencode($thread_id[$i]); ?>">
+                                        <button class="thread-button">Go <i class="bi bi-arrow-right"></i></button>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                    <?php } ?>
+                        <?php } ?>
+                    <?php } else { ?>
                 </div>
-
-
+                        <div class="no-theads-container">
+                            <div class="no-threads-text">
+                                <p>No threads in this category.</p>
+                            </div> 
+                        </div>
+                        
+                    <?php } ?>   
             </div>
         </section>
 

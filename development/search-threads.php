@@ -19,7 +19,7 @@ $result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        echo '<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        echo '<div class="col-12 col-sm-6 col-md-4 col-lg-2">
                 <div class="thread-container">
                     <div class="thread-title">
                         <h5>' . htmlspecialchars($row["Thread_Title"]) . '</h5>
@@ -44,7 +44,11 @@ if ($result->num_rows > 0) {
             </div>';
     }
 } else {
-    echo '<p class="text-muted">No threads found matching your query.</p>';
+    echo '<div class="no-theads-container">
+                <div class="no-threads-text">
+                    <p>No threads found.</p>
+                </div> 
+            </div>';
 }
 
 $stmt->close();

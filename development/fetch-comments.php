@@ -17,6 +17,9 @@ $query->execute();
 $result = $query->get_result();
 
 $comment_id = [];
+$comment_username = [];
+$comment_user_id = [];
+$comment_profile_image = [];
 $comment_text = [];
 $comment_date_time = [];
 $comment_like_count = [];
@@ -26,6 +29,8 @@ $comment_reply_count = [];
 while ($row = $result->fetch_assoc()) {
     $comment_id[] = $row['Thread_Comment_ID'];
     $comment_username[] = $row['Username'];
+    $comment_user_id[] = $row['User_ID'];
+    $comment_profile_image[] = $row['Profile_Image'];
     $comment_text[] = $row['Thread_Comment_Text'];
     $comment_date_time[] = $row['Thread_Comment_Date_Time'];
     $comment_like_count[] = $row['Thread_Comment_Like_Count'];

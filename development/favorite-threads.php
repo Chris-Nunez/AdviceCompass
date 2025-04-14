@@ -1,5 +1,4 @@
 <?php
-    session_start();
     include 'config.php';
     include 'favorite-threads-data.php';
 ?>
@@ -9,7 +8,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Favorite Categories</title>
+        <title>Favorite Threads</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <link rel="stylesheet" href="styles.css">
@@ -68,45 +67,50 @@
                 </div>
 
                 <div class="row mt-5" id="threads-container">
-                    <?php
-                    // Loop through the categories and create Bootstrap columns
-                    for ($i = 0; $i < count($favorite_threads); $i++) {
-                    ?>
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-                            <div class="thread-container">
-                                <div class="thread-title">
-                                    <h5><?php echo htmlspecialchars($favorite_threads[$i]); ?></h5>
+                    <?php if (count($favorite_threads) > 0) { ?>
+                        <?php for ($i = 0; $i < count($favorite_threads); $i++) { ?>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                                <div class="thread-container">
+                                    <div class="thread-title">
+                                        <h5><?php echo htmlspecialchars($favorite_threads[$i]); ?></h5>
+                                    </div>
+
+                                    <div class="thread-username">
+                                        <p>Made by: 
+                                            <a href="view-profile.php?user_id=<?php echo urlencode($favorite_thread_user_ids[$i]); ?>">
+                                                <?php echo htmlspecialchars($favorite_threads_usernames[$i]); ?>
+                                            </a>
+                                        </p>
+                                    </div>
+
+                                    <div class="thread-category">
+                                        <p>Category: <?php echo htmlspecialchars($favorite_thread_category[$i]); ?></p>
+                                    </div>
+
+                                    <div class="thread-text">
+                                        <p><?php echo htmlspecialchars(mb_strimwidth($favorite_thread_text[$i], 0, 27, '...')); ?></p>
+                                    </div>
+
+                                    <div class="thread-year-created">
+                                        <p>Created <?php echo htmlspecialchars($favorite_thread_date[$i]); ?></p>
+                                    </div>
+
+                                    <a href="thread.php?thread_id=<?php echo urlencode($favorite_thread_id[$i]); ?>">
+                                        <button class="explore-thread-categories-button">Go <i class="bi bi-arrow-right"></i></button>
+                                    </a>
                                 </div>
+                            </div>
+                        <?php } ?>
+                    <?php } else { ?>
+                </div> 
 
-                                <div class="thread-username">
-                                    <p>Made by: 
-                                        <a href="view-profile.php?user_id=<?php echo urlencode($favorite_thread_user_ids[$i]); ?>">
-                                            <?php echo htmlspecialchars($favorite_threads_usernames[$i]); ?>
-                                        </a>
-                                    </p>
-                                </div>
-
-                                <div class="thread-category">
-                                    <p> Category: <?php echo htmlspecialchars($favorite_thread_category[$i]); ?> </p>
-                                </div>
-
-                                <div class="thread-text">
-                                    <p><?php echo htmlspecialchars($favorite_thread_text[$i]); ?></p>
-                                </div>
-
-                                <div class="thread-year-created">
-                                    <p>Created <?php echo htmlspecialchars($favorite_thread_year[$i]); ?></p>
-                                </div>
-
-                                <a href="thread.php?thread_id=<?php echo urlencode($favorite_thread_id[$i]); ?>">
-                                    <button class="explore-thread-categories-button">Go <i class="bi bi-arrow-right"></i></button>
-                                </a>
-
+                        <div class="no-threads-container text-center mt-5">
+                            <div class="no-threads-text">
+                                <p>No favorite threads.</p>
                             </div>
                         </div>
-                    <?php } ?>
-                </div>
 
+                    <?php } ?>
             </div>
         </section>
 

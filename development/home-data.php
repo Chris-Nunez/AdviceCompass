@@ -51,7 +51,7 @@ while ($row = $result->fetch_assoc()) {
 }
 
 
-$query = $conn->prepare("SELECT Threads.Thread_ID, Threads.Thread_Title, Threads.Thread_Text, Threads.Thread_Date_Time, Users.User_ID, Users.Username, IndustryThreadCategories.Industry_Thread_Category_ID, IndustryThreadCategories.Industry_Thread_Category_Name
+$query = $conn->prepare("SELECT Threads.Thread_ID, Threads.Thread_Title, Threads.Thread_Text, DATE(Threads.Thread_Date_Time) AS Thread_Date, Users.User_ID, Users.Username, IndustryThreadCategories.Industry_Thread_Category_ID, IndustryThreadCategories.Industry_Thread_Category_Name
                         FROM FavoriteThreads 
                         JOIN Threads ON FavoriteThreads.Thread_ID = Threads.Thread_ID
                         JOIN Users ON Threads.User_ID = Users.User_ID
@@ -67,7 +67,7 @@ $favorite_threads_user_ids = [];
 $favorite_threads_usernames = [];
 $favorite_thread_category = [];
 $favorite_thread_text = [];
-$favorite_thread_year = [];
+$favorite_thread_date = [];
 $favorite_categories_id = [];
 while ($row = $result->fetch_assoc()) {
     $favorite_threads[] = $row['Thread_Title'];
@@ -75,10 +75,46 @@ while ($row = $result->fetch_assoc()) {
     $favorite_threads_usernames[] = $row['Username'];
     $favorite_thread_category[] = $row['Industry_Thread_Category_Name'];
     $favorite_thread_text[] = $row['Thread_Text'];
-    $favorite_thread_year[] = date("Y", strtotime($row['Thread_Date_Time']));
+    $favorite_thread_date[] = $row['Thread_Date'];
     $favorite_thread_id[] = $row['Thread_ID'];
 }
 
+
+$query = $conn->prepare("SELECT Threads.Thread_ID, 
+                            Threads.Thread_Title, 
+                            Threads.Thread_Text, 
+                            DATE(Threads.Thread_Date_Time) AS Thread_Date, 
+                            Users.User_ID, 
+                            Users.Username, 
+                            IndustryThreadCategories.Industry_Thread_Category_ID, 
+                            IndustryThreadCategories.Industry_Thread_Category_Name
+                        FROM Threads
+                        JOIN Users ON Threads.User_ID = Users.User_ID
+                        JOIN IndustryThreadCategories ON Threads.Industry_Thread_Category_ID = IndustryThreadCategories.Industry_Thread_Category_ID
+                        JOIN UserFollowers ON UserFollowers.Following_ID = Threads.User_ID
+                        WHERE UserFollowers.Follower_ID = ?
+                        ORDER BY Threads.Thread_Date_Time DESC
+                        LIMIT 4");
+$query->bind_param("i", $_SESSION['User_ID']);
+$query->execute();
+$result = $query->get_result();
+
+$following_threads = [];
+$following_threads_user_ids = [];
+$following_threads_usernames = [];
+$following_thread_category = [];
+$following_thread_text = [];
+$following_thread_date = [];
+$following_categories_id = [];
+while ($row = $result->fetch_assoc()) {
+    $following_threads[] = $row['Thread_Title'];
+    $following_threads_user_ids[] = $row['User_ID'];
+    $following_threads_usernames[] = $row['Username'];
+    $following_thread_category[] = $row['Industry_Thread_Category_Name'];
+    $following_thread_text[] = $row['Thread_Text'];
+    $following_thread_date[] = $row['Thread_Date'];
+    $following_thread_id[] = $row['Thread_ID'];
+}
 
 $query->close();
 $conn->close();

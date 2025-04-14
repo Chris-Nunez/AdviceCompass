@@ -43,7 +43,7 @@
         </nav>
 
         <section id="settings">
-            <div class="settings-container">
+            <div class="settings-container px-5">
                 <div class="top-container d-flex align-items-center justify-content-between">
             
                     <!-- Left Section: Back & Create Category Buttons -->

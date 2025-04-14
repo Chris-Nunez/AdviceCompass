@@ -45,7 +45,7 @@
                     <input type="password" id="password" name="password" required> <br> <br>
 
                     <button type="submit">Login</button> <br> <br>
-                    <a href="forgot-password-email.html">Forgot Password?</a>
+                    <a href="forgot-password-email.php">Forgot Password?</a>
                 </form>               
             </div>
         </section>
@@ -99,7 +99,7 @@
                     } 
                     else {
                         messageBox.style.color = "red";
-                        messageBox.innerText = data; // Show error message from PHP
+                        messageBox.innerText = "Invalid Login"; // Show error message from PHP
                     }
                 })
                 .catch(error => console.error("Error:", error));

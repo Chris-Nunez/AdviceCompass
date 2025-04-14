@@ -43,7 +43,7 @@ include 'config.php';
         </nav>
 
         <section id="users">
-            <div class="main-container">
+            <div class="main-container px-5">
                 <div class="top-container d-flex align-items-center justify-content-between">
                 
                     <!-- Left Section: Back & Create Category Buttons -->

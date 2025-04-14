@@ -43,28 +43,30 @@
         </nav>
 
         <section id="create-category">
-            <div class="top-container d-flex align-items-center justify-content-between">
-                
-                <!-- Left Section: Back & Create Category Buttons -->
-                <div class="d-flex align-items-center flex-1">
-                    <button class="explore-categories-back-button mx-2" onclick="history.back();">
-                        <i class="bi bi-arrow-left"></i> Back
-                    </button>
+            <div class="create-category-container px-5">
+                <div class="top-container d-flex align-items-center justify-content-between">
+                    
+                    <!-- Left Section: Back & Create Category Buttons -->
+                    <div class="d-flex align-items-center flex-1">
+                        <button class="explore-categories-back-button mx-2" onclick="history.back();">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
+                    </div>
+
                 </div>
+                <h2 id="create-category-title">Create Category</h2>
+                <div class="create-category-form-container">
+                    <div id="errormessage" style="color:red;"></div>  
+                    <form class="create-category-form" id="create-category-form" action="create-category-process.php" method="POST">
+                        <label for="category-name">Category Name</label><br>
+                        <input type="text" id="category-name" name="category-name" required> <br> <br>
 
-            </div>
-            <h2 id="create-category-title">Create Category</h2>
-            <div class="create-category-container">
-                <div id="errormessage" style="color:red;"></div>  
-                <form class="create-category-form" id="create-category-form" action="create-category-process.php" method="POST">
-                    <label for="category-name">Category Name</label><br>
-                    <input type="text" id="category-name" name="category-name" required> <br> <br>
+                        <label for="category-description">Category Description</label><br>
+                        <textarea id="category-description" name="category-description" rows="5" cols="50" required></textarea><br><br>
 
-                    <label for="category-description">Category Description</label><br>
-                    <textarea id="category-description" name="category-description" rows="5" cols="50" required></textarea><br><br>
-
-                    <button type="submit">Create Category</button> <br> <br>
-                </form>               
+                        <button type="submit">Create Category</button> <br> <br>
+                    </form>               
+                </div>
             </div>
         </section>
 

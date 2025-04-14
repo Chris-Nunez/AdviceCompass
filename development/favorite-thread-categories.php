@@ -2,7 +2,6 @@
     session_start();
     include 'config.php';
     include 'favorite-thread-categories-data.php';
-    $_SESSION['last_page'] = 'favorite-thread-categories.php';
 ?>
 
 <!DOCTYPE html>
@@ -69,40 +68,45 @@
                 </div>
 
                 <div class="row mt-5" id="categories-container">
-                    <?php
-                    // Loop through the categories and create Bootstrap columns
-                    for ($i = 0; $i < count($favorite_categories); $i++) {
-                    ?>
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-                            <div class="explore-categories-container">
-                                <div class="category-name">
-                                    <h5><?php echo htmlspecialchars($favorite_categories[$i]); ?></h5>
+                    <?php if (count($favorite_categories) > 0) { ?>
+                        <?php for ($i = 0; $i < count($favorite_categories); $i++) { ?>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                                <div class="explore-categories-container">
+                                    <div class="category-name">
+                                        <h5><?php echo htmlspecialchars($favorite_categories[$i]); ?></h5>
+                                    </div>
+
+                                    <div class="category-username">
+                                        <p>Made by: 
+                                            <a href="view-profile.php?user_id=<?php echo urlencode($favorite_categories_user_ids[$i]); ?>">
+                                                <?php echo htmlspecialchars($favorite_categories_usernames[$i]); ?>
+                                            </a>
+                                        </p>
+                                    </div>
+
+                                    <div class="category-thread-count">
+                                        <p><?php echo htmlspecialchars($favorite_categories_thread_count[$i]); ?> Total Threads</p>
+                                    </div>
+
+                                    <div class="category-year-created">
+                                        <p>Created <?php echo htmlspecialchars($favorite_categories_year[$i]); ?></p>
+                                    </div>
+
+                                    <a href="thread-category.php?category_id=<?php echo urlencode($favorite_categories_id[$i]); ?>">
+                                        <button class="explore-thread-categories-button">Go <i class="bi bi-arrow-right"></i></button>
+                                    </a>
                                 </div>
+                            </div>
+                        <?php } ?>
+                    <?php } else { ?>
+                </div>
 
-                                <div class="category-username">
-                                    <p>Made by: 
-                                        <a href="view-profile.php?user_id=<?php echo urlencode($favorite_categories_user_ids[$i]); ?>">
-                                            <?php echo htmlspecialchars($favorite_categories_usernames[$i]); ?>
-                                        </a>
-                                    </p>
-                                </div>
-
-                                <div class="category-thread-count">
-                                    <p><?php echo htmlspecialchars($favorite_categories_thread_count[$i]); ?> Total Threads</p>
-                                </div>
-
-                                <div class="category-year-created">
-                                    <p>Created <?php echo htmlspecialchars($favorite_categories_year[$i]); ?></p>
-                                </div>
-
-                                <a href="thread-category.php?category_id=<?php echo urlencode($favorite_categories_id[$i]); ?>">
-                                    <button class="explore-thread-categories-button">Go <i class="bi bi-arrow-right"></i></button>
-                                </a>
-
+                        <div class="no-categories-container text-center mt-5">
+                            <div class="no-categories-text">
+                                <p>No favorite categories found.</p>
                             </div>
                         </div>
                     <?php } ?>
-                </div>
 
             </div>
         </section>

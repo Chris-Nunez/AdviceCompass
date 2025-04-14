@@ -118,7 +118,7 @@
                                 </div>
 
                                 <div class="thread-text">
-                                    <p><?php echo htmlspecialchars($thread_text[$i]); ?></p>
+                                    <p><?php echo htmlspecialchars(mb_strimwidth($thread_text[$i], 0, 27, '...')); ?></p>
                                 </div>
 
                                 <div class="thread-year-created">

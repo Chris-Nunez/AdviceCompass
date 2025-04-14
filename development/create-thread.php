@@ -4,7 +4,6 @@
 
     if (isset($_GET['category_id'])) {
         $category_id = $_GET['category_id'];
-        echo "Category ID received: " . htmlspecialchars($_GET['category_id']);
     } 
     else {
         echo "No category selected.";
@@ -52,33 +51,35 @@
         </nav>
 
         <section id="create-thread">
-            <div class="top-container d-flex align-items-center justify-content-between">
-                
-                <!-- Left Section: Back & Create Category Buttons -->
-                <div class="d-flex align-items-center flex-1">
-                    <button class="explore-categories-back-button mx-2" onclick="history.back();">
-                        <i class="bi bi-arrow-left"></i> Back
-                    </button>
+            <div class="create-thread-container px-5">
+                <div class="top-container d-flex align-items-center justify-content-between">
+                    
+                    <!-- Left Section: Back & Create Category Buttons -->
+                    <div class="d-flex align-items-center flex-1">
+                        <button class="explore-categories-back-button mx-2" onclick="history.back();">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
+                    </div>
+
                 </div>
+                <h2 id="create-thread-title">Create Thread</h2>
+                <div class="create-thread-form-container">
+                    <div id="errormessage" style="color:red;"></div> 
+                    <form class="create-thread-form" id="create-thread-form" action="create-thread-process.php" method="POST">
+                        <label for="thread-title">Thread title</label><br>
+                        <input type="text" id="thread-title" name="thread-title" required> <br> <br>
 
-            </div>
-            <h2 id="create-thread-title">Create Thread</h2>
-            <div class="create-thread-container">
-                <div id="errormessage" style="color:red;"></div> 
-                <form class="create-thread-form" id="create-thread-form" action="create-thread-process.php" method="POST">
-                    <label for="thread-title">Thread title</label><br>
-                    <input type="text" id="thread-title" name="thread-title" required> <br> <br>
+                        <label for="thread-text">Thread Text</label><br>
+                        <textarea id="thread-text" name="thread-text" rows="5" cols="50" required></textarea><br><br>
 
-                    <label for="thread-text">Thread Text</label><br>
-                    <textarea id="thread-text" name="thread-text" rows="5" cols="50" required></textarea><br><br>
+                        <label for="thread-image">Upload Image (Optional)</label><br>
+                        <input type="file" id="thread-image" name="thread-image" accept="image/*"><br><br>
 
-                    <label for="thread-image">Upload Image (Optional)</label><br>
-                    <input type="file" id="thread-image" name="thread-image" accept="image/*"><br><br>
+                        <input type="hidden" name="category_id" value="<?php echo htmlspecialchars($category_id); ?>">
 
-                    <input type="hidden" name="category_id" value="<?php echo htmlspecialchars($category_id); ?>">
-
-                    <button type="submit" id="create-thread-button">Create Thread</button> <br> <br>
-                </form>               
+                        <button type="submit" id="create-thread-button">Create Thread</button> <br> <br>
+                    </form>
+                </div>
             </div>
         </section>
 

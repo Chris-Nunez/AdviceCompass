@@ -35,7 +35,11 @@ if ($result->num_rows > 0) {
                     </div>
 
                     <div class="thread-username">
-                        <p>Made by: <a href="view-profile.php?user_id=' . urlencode($row["User_ID"]) . '">' . htmlspecialchars($row["Username"]) . '</a></p>
+                        <p>Made by: 
+                            <a href="view-profile.php?user_id=' . urlencode($row["User_ID"]) . '">
+                                ' . htmlspecialchars($row["Username"]) . '
+                            </a>
+                        </p>
                     </div>
 
                     <div class="thread-category">
@@ -56,8 +60,14 @@ if ($result->num_rows > 0) {
                 </div>
             </div>';
     }
+
 } else {
-    echo '<p class="text-muted">No threads found matching your query.</p>';
+
+    echo '<div class="no-threads-container text-center mt-5">
+            <div class="no-threads-text">
+                <p>No favorite threads.</p>
+            </div>
+          </div>';
 }
 
 $stmt->close();

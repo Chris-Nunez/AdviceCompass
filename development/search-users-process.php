@@ -14,30 +14,27 @@ $result = $query->get_result();
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        ?>
-        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-            <div class="follower-container">
-                <div class="follower-image">
-                    <?php if (!empty($row['Profile_Image'])) : ?>
-                        <img src="<?php echo htmlspecialchars($row['Profile_Image']); ?>" class="profile-pic">
-                    <?php endif; ?>
+        echo '<div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                <div class="follower-container">
+                    <div class="follower-image">';
+                        if (!empty($row["Profile_Image"])) {
+                            echo '<img src="' . htmlspecialchars($row["Profile_Image"]) . '" alt="Profile Picture" class="profile-pic">';
+                        }
+        echo        '</div>
+                    <div class="follower-username">' . htmlspecialchars($row["Username"]) . '</div>
+                    <a href="view-profile.php?user_id=' . urlencode($row["User_ID"]) . '">
+                        <button class="follower-button">Go <i class="bi bi-arrow-right"></i></button>
+                    </a>
                 </div>
-                <div class="follower-username">
-                    <?php echo htmlspecialchars($row['Username']); ?>
-                </div>
-                <a href="view-profile.php?user_id=<?php echo urlencode($row['User_ID']); ?>">
-                    <button class="follower-button">Go <i class="bi bi-arrow-right"></i></button>
-                </a>
-            </div>
-        </div>
-        <?php
+              </div>';
     }
 } else {
-    ?>
-    <div class="col-12">
-        <p class="text-muted">No users found.</p>
-    </div>
-    <?php
+
+    echo '<div class="no-followers-container text-center mt-5">
+            <div class="no-followers-text">
+                <p>No users found.</p>
+            </div>
+          </div>';
 }
 
 $query->close();

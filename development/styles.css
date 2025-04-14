@@ -197,11 +197,11 @@
 /* BEGINNING OF EXPLORE CATEGORY PAGE STYLINGS */
 
 .top-container {
-    margin-top: 30px;
     width: 100%; /* Ensure it spans full width */
     display: flex;
     justify-content: start; /* Align content to the left */
     align-items: center;
+    margin-top: 30px;
 }
 
 .explore-categories-title {
@@ -213,14 +213,16 @@
 .explore-categories-container {
     height: auto; /* Each container takes up half the viewport height */
     max-height: 400px; /* Prevents excessive stretching */
-    background: linear-gradient(to bottom, black, darkblue);  
+    background: linear-gradient(to bottom, darkblue, black);  
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    border: 2px solid black;
     color: white;  
     border-radius: 10px;
     margin-bottom: 10px; /* Prevents overlap with footer */
+    padding: 10px;
     text-align: center;
 }
 
@@ -244,6 +246,18 @@
     height: 30px;
 }
 
+.no-categories-container {
+    width: 100%;
+    text-align: center; 
+    color: white;
+}
+
+.no-categories-text {
+    color: white;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
 /* END OF EXPLORE CATEGORY PAGE STYLINGS */
 
 /* BEGINNING OF CREATE CATEGORY STYLINGS */
@@ -252,20 +266,24 @@
     color: white;
 }
 
-#create-category {
-    background-color: black;
-    height: 100vh;
-    width: 100vw;
-    margin-top: 65px;
+.create-category-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
+    background: linear-gradient(to bottom, black, darkblue, black);
+    overflow-y: auto; /* Enables scrolling */
+    padding-top: 80px; /* Adjust to match the navbar */
+    padding-bottom: 100px; /* Ensure space for footer */
+    min-height: calc(100vh - 55px); /* Ensures it doesn't take up all the viewport */
+    overflow-x: hidden; /* Prevents horizontal scroll */
+    width: 100%;
+    max-width: 100vw; /* Prevents elements from exceeding viewport width */    
 }
 
-.create-category-container {
-    background-color: #303030;
+
+.create-category-form-container {
+    background: transparent;
     height: auto;
     width: 40vw;
     border-radius: 3%;
@@ -273,7 +291,7 @@
     flex-direction: column;
 }
 
-.create-category-container label {
+.create-category-form-container label {
     color: white;
 }
 
@@ -297,7 +315,7 @@
 }
 
 .create-category-form button {
-    background-color: orange;
+    background-color: lightgrey;
     border-radius: 8%;
     width: 90%;
 }
@@ -319,40 +337,55 @@
 .thread-container {
     height: auto; /* Each container takes up half the viewport height */
     max-height: 400px; /* Prevents excessive stretching */
-    background-color: #303030;  
+    background: linear-gradient(to bottom, darkblue, black);  
     display: flex;
+    border: 2px solid black;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     color: white;  
     border-radius: 10px;
     margin-bottom: 10px; /* Prevents overlap with footer */
+    padding: 10px;
     text-align: center;
 }
 
 .thread-button {
-    background-color: orange;
+    background-color: lightgrey;
     border-radius: 8%;
     height: 30px;
+    margin-bottom: 10px;
 }
 
 .create-thread-button {
-    background-color: orange;
+    background-color: lightgrey;
     border-radius: 8%;
     height: 30px;
     width: 175px;
 }
 
 .thread-category-back-button {
-    background-color: orange;
+    background-color: lightgrey;
     border-radius: 8%;
     height: 30px;
 }
 
 .favorite-category-button {
-    background-color: orange;
+    background-color: lightgrey;
     border-radius: 8%;
     height: 30px;
+}
+
+.no-threads-container {
+    width: 100%;
+    text-align: center; 
+    color: white;
+}
+
+.no-threads-text {
+    color: white;
+    font-size: 1.5rem;
+    text-align: center;
 }
 
 /* END OF THREAD CATEGORY STYLINGS */
@@ -363,21 +396,24 @@
     color: white;
 }
 
-#create-thread {
-    background-color: black;
-    height: 100vh;
-    width: 100vw;
-    margin-top: 65px;
+.create-thread-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
+    background: linear-gradient(to bottom, black, darkblue, black);
+    overflow-y: auto; /* Enables scrolling */
+    padding-top: 80px; /* Adjust to match the navbar */
+    padding-bottom: 100px; /* Ensure space for footer */
+    min-height: calc(100vh - 55px); /* Ensures it doesn't take up all the viewport */
+    overflow-x: hidden; /* Prevents horizontal scroll */
+    width: 100%;
+    max-width: 100vw; /* Prevents elements from exceeding viewport width */    
 }
 
-.create-thread-container {
-    background-color: #303030;
-    height: 60vh;
+.create-thread-form-container {
+    background: transparent;
+    height: auto;
     width: 40vw;
     border-radius: 3%;
     display: flex;
@@ -408,7 +444,7 @@
 }
 
 .create-thread-form button {
-    background-color: orange;
+    background-color: lightgrey;
     border-radius: 8%;
     width: 90%;
 }
@@ -425,123 +461,383 @@
 .view-thread-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    background-color: black;
-    overflow-y: auto; /* Enables scrolling */
-    padding-top: 80px; /* Adjust to match the navbar */
-    padding-bottom: 100px; /* Ensure space for footer */
-    min-height: calc(100vh - 55px); /* Ensures it doesn't take up all the viewport */
-    overflow-x: hidden; /* Prevents horizontal scroll */
+    background: linear-gradient(to bottom, black, darkblue, black);
+    padding: 80px 20px 100px 20px;
+    min-height: calc(100vh - 55px);
     width: 100%;
-    max-width: 100vw; /* Prevents elements from exceeding viewport width */  
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 .thread {
-    background-color: #303030;
-    height: auto;
+    background: transparent;
+    border-radius: 10px;
+    padding: 20px;
     width: 70%;
-    border-radius: 3%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 30px;
 }
 
+.explore-categories-title h1,
+.explore-categories-title h5 {
+    color: white;
+    text-align: center;
+    margin: 10px 0;
+}
+
+.main-thread-box {
+    background: linear-gradient(to bottom, darkblue, black);
+    padding: 15px;
+    border-left: 2px solid white;
+    border-bottom: 2px solid white;
+    border-radius: 6px;
+}
+
+.main-thread-header h2 {
+    color: lightblue;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+    width: 100%;
+}
+
+.username-profile-pic {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px; /* Adds space between image and username */
+    margin-bottom: 10px;
+}
+
+.username-profile-pic h5 {
+    margin-bottom: 0;
+}
+
+.profile-pic {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+
 .favorite-thread-button {
-    background-color: orange;
+    background-color: lightgrey;
     border-radius: 8%;
     height: 30px;
 }
 
 .delete-thread-button {
-    background-color: orange;
+    background-color: lightgrey;
     border-radius: 8%;
     height: 30px;
 }
 
 .view-thread-text {
-    height: 40%;
-    width: 85%;
+    width: 100%;
+    margin-top: 10px;
+    font-size: 1.4rem;
     color: white;
-    font-size: 2vw;
-    text-align: center;
-    margin-top: 20px;
+    text-align: left;
 }
 
 .thread-actions {
-    display: flex;                    
-    justify-content: space-evenly;    
-    align-items: center;              
-    margin-top: 20px;                
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.comment-user-info a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.comment-indent-arrow {
+    width: 50px;
+    padding-top: 5px;
+    display: flex;
+    justify-content: center;
+    color: white;
+    font-size: 1.3rem;
+}
+
+.comment-row {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.comment-thread {
+    background: linear-gradient(to bottom, darkblue, black);
+    margin-left: 60px; /* Indent for comments */
+    flex: 1;
+    padding: 15px;
+    border-left: 2px solid white;
+    border-bottom: 2px solid white;
+    border-radius: 6px;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.comment-user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Small space between image and username */
+}
+
+.comment-body {
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+
+.comment-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+    flex-wrap: wrap;
+}
+
+.comment-date-time {
+    font-size: 0.8rem;
+    color: white;
+}
+
+/* Submit buttons */
+.btn.btn-primary {
+    margin-top: 8px;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+}
+
+#comment-box, .reply-box {
     width: 100%;
+    margin-top: 15px;
 }
 
 .action-button {
     display: flex;
-    align-items: center;              
-    text-decoration: none;            
-    color: orange;                     
-    background-color: #333;           
-    padding: 10px 15px;               
-    border-radius: 5px;               
+    align-items: center;
+    color: white;
+    background: transparent;
+    border: none;
+    padding-right: 75px;
+    border-radius: 5px;
+    font-size: 1.4rem;
+    cursor: pointer;
+    text-decoration: none;
     transition: background-color 0.3s;
-    font-size: 2vw;
 }
 
+
 .action-button:hover {
-    background-color: #555;           
+    background-color: #444;
 }
 
 .action-button i {
-    margin-right: 8px;                
+    margin-right: 6px;
 }
 
 .comments-container {
-    background-color: #303030;
-    width: 60%;
-    height: auto;
-    border-radius: 3%;
+    width: 80%;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 20px;
     color: white;
-    padding: 20px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    overflow-y: auto; /* Allows the container to scroll if content overflows */
+    margin-top: 30px;
 }
 
 .replies-container {
-    background-color: #303030;
-    width: 50%;
-    height: auto;
-    border-radius: 3%;
+    margin-left: 30px; /* Further indent for replies */
+    margin-top: 10px;
+    padding-left: 15px;
+    border-left: 2px dashed #666;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 15px;
+}
+
+.reply-thread {
+    background-color: rgba(255, 255, 255, 0.03);
+    padding: 12px;
+    border-left: 2px solid #666;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+.comment-username,
+.comment-text,
+.comment-date {
+    font-size: 0.85rem;
     color: white;
-    padding: 20px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    overflow-y: auto; /* Allows the container to scroll if content overflows */
 }
 
 .view-thread-image {
-    width: 85%; /* Ensure the image container is the same width as the text */
+    width: 100%;
+    margin-top: 20px;
     display: flex;
     justify-content: center;
-    margin-top: 20px;
 }
+
 
 .view-thread-image img {
-    max-width: 100%; /* Ensures the image doesn’t overflow its container */
-    max-height: 400px; /* Adjust max height to prevent it from being too large */
-    width: auto; /* Maintains aspect ratio */
-    height: auto; /* Maintains aspect ratio */
-    border-radius: 5px; /* Optional: adds rounded corners */
-    object-fit: contain; /* Ensures the entire image fits within the area */
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 5px;
+    object-fit: contain;
 }
 
+.toggle-replies-btn {
+    background: none;
+    color: lightblue;
+    border: none;
+    cursor: pointer;
+    margin-top: 8px;
+    font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+    .view-thread-container {
+        padding: 60px 10px 80px 10px;
+    }
+
+    .main-thread-box {
+        width: 100%;
+        padding: 15px;
+        box-sizing: border-box;
+    }
+
+    .main-thread-header h2 {
+        text-align: center;
+    }
+    
+
+    .thread {
+        width: 100%;
+        padding: 15px;
+        font-size: 0.95rem;
+        width: 100%;
+    }
+
+    .explore-categories-title h1 {
+        font-size: 1.5rem;
+    }
+
+    .view-thread-text {
+        font-size: 1.1rem;
+    }
+
+    .top-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .favorite-thread-button,
+    .delete-thread-button {
+        font-size: 0.8rem;
+        height: auto;
+        padding: 5px 10px;
+    }
+
+    .comment-row {
+        flex-direction: column;
+        align-items: stretch;
+        margin-left: 0;
+    }
+
+    .comment-indent-arrow {
+        display: none;
+    }
+
+    .comment-thread {
+        margin-left: 0;
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+
+    .comment-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .comments-container {
+        width: 100%;
+    }
+
+    .replies-container {
+        margin-left: 0;
+        padding-left: 10px;
+        border-left: 1px dashed #555;
+    }
+
+    .reply-thread {
+        margin-left: 0;
+        padding: 10px;
+    }
+
+    .action-button {
+        padding-right: 20px;
+        font-size: 1.2rem;
+    }
+
+    .view-thread-image img {
+        max-height: 250px;
+    }
+
+    .btn.btn-primary {
+        font-size: 0.85rem;
+        padding: 5px 10px;
+    }
+
+    #comment-box,
+    .reply-box {
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .explore-categories-title h1 {
+        font-size: 1.25rem;
+    }
+
+    .main-thread-box {
+        width: 100%;
+        padding: 15px;
+        box-sizing: border-box;
+    }
+
+    .profile-pic {
+        width: 28px;
+        height: 28px;
+    }
+
+    .action-button {
+        font-size: 1rem;
+    }
+
+    .comment-body {
+        font-size: 0.9rem;
+    }
+}
 
 /* END OF THREAD STYLINGS */
 
@@ -556,18 +852,18 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: black;
+    background: linear-gradient(to bottom, black, darkblue, black);
     overflow-y: auto; /* Enables scrolling */
     padding-top: 80px; /* Adjust to match the navbar */
     padding-bottom: 100px; /* Ensure space for footer */
     min-height: calc(100vh - 55px); /* Ensures it doesn't take up all the viewport */
     overflow-x: hidden; /* Prevents horizontal scroll */
     width: 100%;
-    max-width: 100vw; /* Prevents elements from exceeding viewport width */   
+    max-width: 100vw; /* Prevents elements from exceeding viewport width */    
 }
 
 .settings-box {
-    background-color: #303030;
+    background: transparent;
     width: 70%;
     border-radius: 3%;
     display: flex;
@@ -587,9 +883,10 @@
     display: block; /* Ensures it takes up full width */
     padding: 12px;
     font-size: 16px;
-    border: 2px solid orange;
+    border-left: 2px solid white;
+    border-bottom: 2px solid white;
     cursor: pointer;
-    background-color: transparent;
+    background: linear-gradient(to bottom, darkblue, black);
     color: white;
     border-radius: 5px;
     text-align: center;
@@ -604,23 +901,23 @@
 
 /* BEGINNING OF VIEW PROFILE STYLINGS */
 
-#profile {
+.profile {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: black;
+    background: linear-gradient(to bottom, black, darkblue, black);
     overflow-y: auto; /* Enables scrolling */
     padding-top: 80px; /* Adjust to match the navbar */
     padding-bottom: 100px; /* Ensure space for footer */
     min-height: calc(100vh - 55px); /* Ensures it doesn't take up all the viewport */
     overflow-x: hidden; /* Prevents horizontal scroll */
     width: 100%;
-    max-width: 100vw; /* Prevents elements from exceeding viewport width */   
+    max-width: 100vw; /* Prevents elements from exceeding viewport width */    
 }
 
 .profile-container {
-    background-color: #303030;
+    background: linear-gradient(to bottom, darkblue, black);
     min-height: 60vh; /* Set a minimum height, but allow it to grow */
     width: 60vw;
     border-radius: 3%;
@@ -719,7 +1016,7 @@
 }
 
 .follow-user-button {
-    background-color: orange;
+    background-color: lightgrey;
     border-radius: 8%;
     height: 30px;
 }
@@ -738,25 +1035,10 @@
     text-align: center;
 }
 
-.followers-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: black;
-    overflow-y: auto; /* Enables scrolling */
-    padding-top: 80px; /* Adjust to match the navbar */
-    padding-bottom: 100px; /* Ensure space for footer */
-    min-height: calc(100vh - 55px); /* Ensures it doesn't take up all the viewport */
-    overflow-x: hidden; /* Prevents horizontal scroll */
-    width: 100%;
-    max-width: 100vw; /* Prevents elements from exceeding viewport width */   
-}
-
 .follower-container {
     height: auto; /* Each container takes up half the viewport height */
     max-height: 400px; /* Prevents excessive stretching */
-    background-color: #303030;  
+    background: linear-gradient(to bottom, darkblue, black);  
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -768,28 +1050,19 @@
 }
 
 .no-followers-container {
-    height: auto; /* Each container takes up half the viewport height */
-    max-height: 400px; /* Prevents excessive stretching */
-    background-color: #303030;  
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: white;  
-    border-radius: 10px;
-    margin-bottom: 10px; /* Prevents overlap with footer */
-    text-align: center;
+    width: 100%;
+    text-align: center; 
+    color: white;
 }
 
 .no-followers-text {
     color: white;
     font-size: 1.5rem;
     text-align: center;
-    margin-top: 20px;
 }
 
 .follower-button {
-    background-color: orange;
+    background-color: lightgrey;
     border-radius: 8%;
     height: 30px;
     margin-bottom: 10px;
@@ -836,7 +1109,7 @@
 .following-container {
     height: auto; /* Each container takes up half the viewport height */
     max-height: 400px; /* Prevents excessive stretching */
-    background-color: #303030;  
+    background: linear-gradient(to bottom, darkblue, black); 
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -848,28 +1121,19 @@
 }
 
 .no-following-container {
-    height: auto; /* Each container takes up half the viewport height */
-    max-height: 400px; /* Prevents excessive stretching */
-    background-color: #303030;  
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: white;  
-    border-radius: 10px;
-    margin-bottom: 10px; /* Prevents overlap with footer */
-    text-align: center;
+    width: 100%;
+    text-align: center; 
+    color: white;
 }
 
 .no-following-text {
     color: white;
     font-size: 1.5rem;
     text-align: center;
-    margin-top: 20px;
 }
 
 .following-button {
-    background-color: orange;
+    background-color: lightgrey;
     border-radius: 8%;
     height: 30px;
     margin-bottom: 10px;

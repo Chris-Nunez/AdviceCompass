@@ -98,116 +98,116 @@
         </nav>
 
         <section id="profile">
-            <div class="top-container d-flex align-items-center justify-content-between">
-                    
-                <!-- Left Section: Back & Create Category Buttons -->
-                <div class="d-flex align-items-center flex-1">
-                    <button class="explore-categories-back-button mx-2" onclick="history.back();">
-                        <i class="bi bi-arrow-left"></i> Back
-                    </button>
-                </div>
-
-            </div>
-            <h2 id="profile-title">Profile</h2>
-            <div class="profile-container">                
-                <div class="profile-top-row">
-                    <div class="profile-image">
-                        <?php if (!empty($profile_image)) : ?>
-                            <img src="<?php echo htmlspecialchars($profile_image); ?>" alt="Profile Picture" id="profile-image">
-                        <?php endif; ?>
-                    </div>
-                    <div class="profile-info">
-                        <div class="profile-name">
-                            <?php echo htmlspecialchars($first_name . " " . $last_name . " (" . $username . ")"); ?>
-                        </div>
-                        <div class="profile-occupation-title">
-                            <p id="occupation-title"><?php echo htmlspecialchars($occupation_title); ?></p>
-                            <?php if ($user_id == $_SESSION["User_ID"]) { ?>
-                                <button class="edit-btn" onclick="editOccupation()">
-                                    <i class="bi bi-pencil"></i> Edit Occupation Title
-                                </button>
-                            <?php } ?>
-                        </div>
-                    </div>
-                </div>
-                <div class="edit-image-button-container">
-                    <?php if ($user_id == $_SESSION["User_ID"]) { ?>
-                        <input type="file" id="image-upload" style="display: none;" accept="image/*">
-                        <button class="edit-btn" id="edit-image-button" onclick="document.getElementById('image-upload').click();">
-                            <i class="bi bi-pencil"></i> Edit Image
+            <div class="profile px-5">
+                <div class="top-container d-flex align-items-center justify-content-between">
+                        
+                    <!-- Left Section: Back & Create Category Buttons -->
+                    <div class="d-flex align-items-center flex-1">
+                        <button class="explore-categories-back-button mx-2" onclick="history.back();">
+                            <i class="bi bi-arrow-left"></i> Back
                         </button>
-                    <?php } ?>
-                </div>
+                    </div>
 
-                <div class="profile-bio-container">
-                    <h4>Bio</h4>
-                    <p id="bio-text"><?php echo htmlspecialchars($bio_text); ?></p>
-                    <?php if ($user_id == $_SESSION["User_ID"]) { ?>
-                        <button class="edit-btn" onclick="editBio()">
-                            <i class="bi bi-pencil"></i> Edit Bio
-                        </button>
-                    <?php } ?>
                 </div>
-                <div class="profile-bottom-row">
-                    <div class="location-state-container">
-                        <div class="location-state-title">From</div>
-                        <div id="location-text"><?php echo htmlspecialchars($location_state); ?></div>
+                <h2 id="profile-title">Profile</h2>
+                <div class="profile-container">                
+                    <div class="profile-top-row">
+                        <div class="profile-image">
+                            <?php if (!empty($profile_image)) : ?>
+                                <img src="<?php echo htmlspecialchars($profile_image); ?>" alt="Profile Picture" id="profile-image">
+                            <?php endif; ?>
+                        </div>
+                        <div class="profile-info">
+                            <div class="profile-name">
+                                <?php echo htmlspecialchars($first_name . " " . $last_name . " (" . $username . ")"); ?>
+                            </div>
+                            <div class="profile-occupation-title">
+                                <p id="occupation-title"><?php echo htmlspecialchars($occupation_title); ?></p>
+                                <?php if ($user_id == $_SESSION["User_ID"]) { ?>
+                                    <button class="edit-btn" onclick="editOccupation()">
+                                        <i class="bi bi-pencil"></i> Edit Occupation Title
+                                    </button>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="edit-image-button-container">
                         <?php if ($user_id == $_SESSION["User_ID"]) { ?>
-                            <button class="edit-btn" onclick="editLocation()">
-                                <i class="bi bi-pencil"></i> Edit Location
+                            <input type="file" id="image-upload" style="display: none;" accept="image/*">
+                            <button class="edit-btn" id="edit-image-button" onclick="document.getElementById('image-upload').click();">
+                                <i class="bi bi-pencil"></i> Edit Image
                             </button>
                         <?php } ?>
                     </div>
-                    <div class="follower-count-container">
-                        <div class="follower-count-title">
-                            Follower Count
-                        </div>
-                        <div class="follower-count">
-                            <?php echo htmlspecialchars($follower_count); ?>
-                        </div>
-                        <a href="view-followers.php?user_id=<?php echo htmlspecialchars($user_id); ?>">
-                            <button class="view-followers-button">
-                                View Followers
+
+                    <div class="profile-bio-container">
+                        <h4>Bio</h4>
+                        <p id="bio-text"><?php echo htmlspecialchars($bio_text); ?></p>
+                        <?php if ($user_id == $_SESSION["User_ID"]) { ?>
+                            <button class="edit-btn" onclick="editBio()">
+                                <i class="bi bi-pencil"></i> Edit Bio
                             </button>
-                        </a>
+                        <?php } ?>
                     </div>
-                    <div class="following-count-container">
-                        <div class="following-count-title">
-                            Following Count
+                    <div class="profile-bottom-row">
+                        <div class="location-state-container">
+                            <div class="location-state-title">From</div>
+                            <div id="location-text"><?php echo htmlspecialchars($location_state); ?></div>
+                            <?php if ($user_id == $_SESSION["User_ID"]) { ?>
+                                <button class="edit-btn" onclick="editLocation()">
+                                    <i class="bi bi-pencil"></i> Edit Location
+                                </button>
+                            <?php } ?>
                         </div>
-                        <div class="following-count">
-                            <?php echo htmlspecialchars($following_count); ?>
+                        <div class="follower-count-container">
+                            <div class="follower-count-title">
+                                Follower Count
+                            </div>
+                            <div class="follower-count">
+                                <?php echo htmlspecialchars($follower_count); ?>
+                            </div>
+                            <a href="view-followers.php?user_id=<?php echo htmlspecialchars($user_id); ?>">
+                                <button class="view-followers-button">
+                                    View Followers
+                                </button>
+                            </a>
                         </div>
-                        <a href="view-following.php?user_id=<?php echo htmlspecialchars($user_id); ?>">
-                            <button class="view-following-button">
-                                View Following
-                            </button>
-                        </a>
-                    </div>
-                    <div class="thread-count-container">
-                        <div class="thread-count-title">
-                            Thread Count
+                        <div class="following-count-container">
+                            <div class="following-count-title">
+                                Following Count
+                            </div>
+                            <div class="following-count">
+                                <?php echo htmlspecialchars($following_count); ?>
+                            </div>
+                            <a href="view-following.php?user_id=<?php echo htmlspecialchars($user_id); ?>">
+                                <button class="view-following-button">
+                                    View Following
+                                </button>
+                            </a>
                         </div>
-                        <div class="thread-count">
-                            <?php echo htmlspecialchars($thread_count); ?>
+                        <div class="thread-count-container">
+                            <div class="thread-count-title">
+                                Thread Count
+                            </div>
+                            <div class="thread-count">
+                                <?php echo htmlspecialchars($thread_count); ?>
+                            </div>
+                            <a href="view-user-threads.php?user_id=<?php echo htmlspecialchars($user_id); ?>">
+                                <button class="view-threads-button">
+                                    View Threads
+                                </button>
+                            </a>
                         </div>
-                        <a href="view-user-threads.php?user_id=<?php echo htmlspecialchars($user_id); ?>">
-                            <button class="view-threads-button">
-                                View Threads
-                            </button>
-                        </a>
-                    </div>
-                    <div class="comment-count-container">
-                        <div class="comment-count-title">
-                            Comment Count
-                        </div>
-                        <div class="comment-count">
-                            <?php echo htmlspecialchars($comment_count); ?>
+                        <div class="comment-count-container">
+                            <div class="comment-count-title">
+                                Comment Count
+                            </div>
+                            <div class="comment-count">
+                                <?php echo htmlspecialchars($comment_count); ?>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
             <?php if ($user_id !== $_SESSION["User_ID"]) { ?>
                 <div class="follow-user">
                     <button class="follow-user-button" id="follow-button" data-user-id="<?php echo $user_id; ?>">
@@ -215,7 +215,7 @@
                     </button>
                 </div>
             <?php } ?>
-
+            </div>
 
         </section>
 

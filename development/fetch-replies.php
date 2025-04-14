@@ -17,11 +17,13 @@ if (isset($_GET['comment_id'])) {
         $replies[] = [
             'reply_id' => $row['Thread_Comment_Reply_ID'],
             'username' => $row['Username'],
+            'user_id' => $row['User_ID'],
             'text' => $row['Thread_Comment_Reply_Text'],
             'date_time' => $row['Thread_Comment_Reply_Date_Time'],
             'like_count' => $row['Thread_Comment_Reply_Like_Count'],
             'dislike_count' => $row['Thread_Comment_Reply_Dislike_Count'],
-        ];
+            'profile_image' => $row['Profile_Image'] ?? '', // Adjust this column name to match your DB
+        ];        
     }
 
     echo json_encode($replies);
