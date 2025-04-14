@@ -40,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $emailSender->addTo($email);
     $emailSender->addContent("text/plain", "Click the link to reset your password: $resetLink");
 
-    $sendgrid = new \SendGrid('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');
-
+    $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
+    
     try {
         $response = $sendgrid->send($emailSender);
         echo "Reset link sent! Check your email.";
