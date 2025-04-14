@@ -2,3 +2,6 @@ development/config.php
 testing/config.php
 production/config.php
 development/vendor/
+etc/nginx/sites-available/development
+etc/nginx/sites-available/testing
+etc/nginx/sites-available/production
