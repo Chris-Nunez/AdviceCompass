@@ -5,7 +5,12 @@
     if (!isset($_GET['user_id'])) {
         die("User ID not provided.");
     }
-    
+
+    if (!isset($_SESSION['User_ID'])) {
+        header("Location: login.php?error=1");
+        exit();
+    }
+
     $user_id = intval($_GET['user_id']); 
     
     $query = $conn->prepare("SELECT Threads.Thread_ID, Threads.Thread_Title, Threads.Thread_Text, Threads.Thread_Date_Time, 
@@ -70,6 +75,9 @@
                         <a href="logout.php">   
                             <button class="navbar-logout-button">Logout</button>
                         </a>
+                        <a href="help.php">
+                            <i class="bi bi-question-circle"></i>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -94,45 +102,49 @@
                     <h1>User Threads</h1>
                 </div>
 
-                <div class="row mt-5">
-                    <?php
-                    // Loop through the categories and create Bootstrap columns
-                    for ($i = 0; $i < count($threads); $i++) {
-                    ?>
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-                            <div class="thread-container">
-                                <div class="thread-title">
-                                    <h5><?php echo htmlspecialchars($threads[$i]); ?></h5>
+                <div class="row mt-5" id="threads-container">
+                    <?php if (count($threads) > 0) { ?>
+                        <?php for ($i = 0; $i < count($threads); $i++) { ?>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                                <div class="thread-container">
+                                    <div class="thread-title">
+                                        <h5><?php echo htmlspecialchars($threads[$i]); ?></h5>
+                                    </div>
+
+                                    <div class="thread-username">
+                                        <p>Made by: 
+                                            <a href="view-profile.php?user_id=<?php echo urlencode($threads_user_ids[$i]); ?>">
+                                                <?php echo htmlspecialchars($threads_usernames[$i]); ?>
+                                            </a>
+                                        </p>
+                                    </div>
+
+                                    <div class="thread-category">
+                                        <p>Category: <?php echo htmlspecialchars($thread_category[$i]); ?></p>
+                                    </div>
+
+                                    <div class="thread-text">
+                                        <p><?php echo htmlspecialchars(mb_strimwidth($thread_text[$i], 0, 27, '...')); ?></p>
+                                    </div>
+
+                                    <div class="thread-year-created">
+                                        <p>Created <?php echo htmlspecialchars($thread_year[$i]); ?></p>
+                                    </div>
+
+                                    <a href="thread.php?thread_id=<?php echo urlencode($thread_id[$i]); ?>">
+                                        <button class="explore-thread-categories-button">Go <i class="bi bi-arrow-right"></i></button>
+                                    </a>
                                 </div>
-
-                                <div class="thread-username">
-                                    <p>Made by: 
-                                        <a href="view-profile.php?user_id=<?php echo urlencode($threads_user_ids[$i]); ?>">
-                                            <?php echo htmlspecialchars($threads_usernames[$i]); ?>
-                                        </a>
-                                    </p>
-                                </div>
-
-                                <div class="thread-category">
-                                    <p> Category: <?php echo htmlspecialchars($thread_category[$i]); ?> </p>
-                                </div>
-
-                                <div class="thread-text">
-                                    <p><?php echo htmlspecialchars($thread_text[$i]); ?></p>
-                                </div>
-
-                                <div class="thread-year-created">
-                                    <p>Created <?php echo htmlspecialchars($thread_year[$i]); ?></p>
-                                </div>
-
-                                <a href="thread.php?thread_id=<?php echo urlencode($thread_id[$i]); ?>">
-                                    <button class="explore-thread-categories-button">Go <i class="bi bi-arrow-right"></i></button>
-                                </a>
-
+                            </div>
+                        <?php } ?>
+                    <?php } else { ?>
+                </div> 
+                        <div class="no-threads-container">
+                            <div class="no-threads-text">
+                                <p>No threads found.</p>
                             </div>
                         </div>
                     <?php } ?>
-                </div>
 
             </div>
         </section>

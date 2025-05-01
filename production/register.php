@@ -1,52 +1,247 @@
-<?php
-session_start();
-include 'config.php';
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Registration</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
 
-header('Content-Type: application/json'); // Set response type to JSON
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $first_name = $_POST['first_name'];
-    $last_name = $_POST['last_name'];
-    $email = $_POST['email'];
-    $username = $_POST['username'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    $occupation_title = $_POST['occupation_title'];
-    $bio_text = $_POST['bio_text'];
-    $location_state = $_POST['location_state'];
-
-    //Check if email or username already exists
-    $query = $conn->prepare("SELECT Email, Username FROM Users WHERE Email = ? OR Username = ?");
-    $query->bind_param("ss", $email, $username);
-    $query->execute();
-    $result = $query->get_result();
-
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        if ($row['Email'] == $email) {
-            echo json_encode(["status" => "error", "message" => "Email already exists"]);
-        } else {
-            echo json_encode(["status" => "error", "message" => "Username already exists"]);
-        }
-        exit();
-    } 
-    else {
-        //Insert new user with the new fields
-        $query = $conn->prepare("INSERT INTO Users (First_Name, Last_Name, Username, Email, User_Password, Occupation_Title, Bio_Text, Location_State) 
-                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        $query->bind_param("ssssssss", $first_name, $last_name, $username, $email, $password, $occupation_title, $bio_text, $location_state);
-
-        if ($query->execute()) {
-            echo json_encode(["status" => "success", "message" => "Registration successful! Redirecting..."]);
-            exit();  
-        } else {
-            echo json_encode(["status" => "error", "message" => "Database error: " . $conn->error]);
-            exit();
-        }
+        <nav class="navbar navbar-expand-md fixed-top" style="background-color: #303030;">
+            <div class="container">
+                <a href="#home" class="navbar-brand text-white">
+                    <h1 class="text-white mb-0">AdviceCompass</h1>
+                </a>
         
-    }
+                <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+        
+                <div class="collapse navbar-collapse" id="nav-collapse">
+                    <div class="navbar-nav ms-auto text-center text-md-end mobile-nav-buttons">
+                        <a href="login.php">
+                            <button class="navbar-login-button me-md-4 mb-2 mb-md-0">Login</button>
+                        </a>
+                        <a href="register.php">
+                            <button class="navbar-signup-button">Sign Up</button>
+                        </a>
+                        <a href="help.php">
+                            <i class="bi bi-question-circle"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
 
-    $query->close();
-    $conn->close();
-}
-?>
+        <section id="registration">
+            <h2 id="registration-title">Registration</h2>
+            <div class="registration-container">
+                <div id="errormessage" style="color:red;"></div>  
+                <form class="registration-form" id="registration-form" action="register-process.php" method="POST">
+                    <label for="first_name">First Name</label><br>
+                    <input type="text" id="first_name" name="first_name" required> <br> <br>
+        
+                    <label for="last_name">Last Name</label><br>
+                    <input type="text" id="last_name" name="last_name" required> <br> <br>
+        
+                    <label for="email">Email</label><br>
+                    <input type="text" id="email" name="email" required> <br> <br>
+        
+                    <label for="username">Username</label><br>
+                    <input type="text" id="username" name="username" required> <br> <br>
 
+                    <label for="occupation_title">Occupation Title</label><br>
+                    <input type="text" id="occupation_title" name="occupation_title" required> <br> <br>
+        
+                    <label for="bio_text">Bio</label><br>
+                    <textarea id="bio_text" name="bio_text" rows="4" cols="50" required></textarea> <br> <br>
+        
+                    <label for="location_state">Location State</label><br>
+                    <select id="location_state" name="location_state" required>
+                        <option value="" disabled selected>Select State</option>
+                        <option value="Alabama">Alabama</option>
+                        <option value="Alaska">Alaska</option>
+                        <option value="Arizona">Arizona</option>
+                        <option value="Arkansas">Arkansas</option>
+                        <option value="California">California</option>
+                        <option value="Colorado">Colorado</option>
+                        <option value="Connecticut">Connecticut</option>
+                        <option value="Delaware">Delaware</option>
+                        <option value="Florida">Florida</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Hawaii">Hawaii</option>
+                        <option value="Idaho">Idaho</option>
+                        <option value="Illinois">Illinois</option>
+                        <option value="Indiana">Indiana</option>
+                        <option value="Iowa">Iowa</option>
+                        <option value="Kansas">Kansas</option>
+                        <option value="Kentucky">Kentucky</option>
+                        <option value="Louisiana">Louisiana</option>
+                        <option value="Maine">Maine</option>
+                        <option value="Maryland">Maryland</option>
+                        <option value="Massachusetts">Massachusetts</option>
+                        <option value="Michigan">Michigan</option>
+                        <option value="Minnesota">Minnesota</option>
+                        <option value="Mississippi">Mississippi</option>
+                        <option value="Missouri">Missouri</option>
+                        <option value="Montana">Montana</option>
+                        <option value="Nebraska">Nebraska</option>
+                        <option value="Nevada">Nevada</option>
+                        <option value="New Hampshire">New Hampshire</option>
+                        <option value="New Jersey">New Jersey</option>
+                        <option value="New Mexico">New Mexico</option>
+                        <option value="New York">New York</option>
+                        <option value="North Carolina">North Carolina</option>
+                        <option value="North Dakota">North Dakota</option>
+                        <option value="Ohio">Ohio</option>
+                        <option value="Oklahoma">Oklahoma</option>
+                        <option value="Oregon">Oregon</option>
+                        <option value="Pennsylvania">Pennsylvania</option>
+                        <option value="Rhode Island">Rhode Island</option>
+                        <option value="South Carolina">South Carolina</option>
+                        <option value="South Dakota">South Dakota</option>
+                        <option value="Tennessee">Tennessee</option>
+                        <option value="Texas">Texas</option>
+                        <option value="Utah">Utah</option>
+                        <option value="Vermont">Vermont</option>
+                        <option value="Virginia">Virginia</option>
+                        <option value="Washington">Washington</option>
+                        <option value="West Virginia">West Virginia</option>
+                        <option value="Wisconsin">Wisconsin</option>
+                        <option value="Wyoming">Wyoming</option>
+                    </select><br><br>
+
+        
+                    <label for="password">Password</label><br>
+                    <input type="password" id="password" name="password" required> <br> <br>
+
+                    <p>*Must be at least 8 characters long</p>
+                    <p>*Must include at least one letter</p>
+                    <p>*Must include at least one number</p>
+                    <p>*Must include at least one special character</p>
+        
+                    <label for="verify_password">Verify Password</label><br>
+                    <input type="password" id="verify_password" name="verify_password" required> <br> <br>
+        
+                    <button type="submit">Register</button> <br> <br>
+                </form>               
+            </div>
+        </section>
+        
+
+        <section id="footer-section">
+            <div class="footer-container">
+              <div class="footer-text">
+                <p>&copy; AdviceCompass 2025</p>
+              </div>
+            </div>
+        </section>
+
+        <script>
+
+            const navCollapse = document.getElementById('nav-collapse');
+            const navbar = document.querySelector('.navbar');
+
+            navCollapse.addEventListener('show.bs.collapse', () => {
+                navbar.classList.add('expanded');
+            });
+
+            navCollapse.addEventListener('hide.bs.collapse', () => {
+                navbar.classList.remove('expanded');
+            });
+
+            
+            document.getElementById("registration-form").addEventListener("submit", function(event) {
+                event.preventDefault(); // Prevent form from submitting normally
+
+                var errormessage = "";
+                
+                var nameRegex = /^[A-Za-z]+$/; // Only letters (uppercase and lowercase)
+                var usernameRegex = /^[A-Za-z0-9]+$/; // Letters (uppercase and lowercase) and numbers
+                var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email pattern
+                var passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/; // Password must have at least 8 characters, including letters, numbers and special characters
+                var bioRegex = /^.{10,500}$/; // Bio should be between 10 to 500 characters
+                var stateRegex = /^[A-Za-z\s]+$/; // Allow only letters and spaces for the location state
+                var occupationRegex = /^[A-Za-z\s]+$/; // Only letters and spaces for occupation title
+
+                // Check for valid inputs using regular expressions
+                if (!nameRegex.test(document.getElementById('first_name').value)) {
+                    errormessage += "*First Name must contain only letters<br>";
+                }
+                if (!nameRegex.test(document.getElementById('last_name').value)) {
+                    errormessage += "*Last Name must contain only letters<br>";
+                }
+                if (!usernameRegex.test(document.getElementById('username').value)) {
+                    errormessage += "*Username must contain letters and numbers<br>";
+                }
+                if (!emailRegex.test(document.getElementById('email').value)) {
+                    errormessage += "*Invalid Email format<br>";
+                }
+                if (!passwordRegex.test(document.getElementById('password').value)) {
+                    errormessage += "*Password must contain at least 8 characters, including letters, numbers and at least one special character<br>";
+                }
+
+                if (document.getElementById('verify_password').value.length == 0) {
+                    errormessage += "*Please Verify Your Password<br>";
+                }
+                if (document.getElementById('password').value !== document.getElementById('verify_password').value) {
+                    errormessage += "*Passwords do not match<br>";
+                }
+
+                if (!occupationRegex.test(document.getElementById('occupation_title').value)) {
+                    errormessage += "*Occupation Title must contain only letters and spaces<br>";
+                }
+
+                if (!bioRegex.test(document.getElementById('bio_text').value)) {
+                    errormessage += "*Bio must be between 10 to 500 characters<br>";
+                }
+
+                if (document.getElementById('location_state').value.trim() === "") {
+                    errormessage += "*Location State is required<br>";
+                }
+                if (!stateRegex.test(document.getElementById('location_state').value)) {
+                    errormessage += "*Location State must contain only letters and spaces<br>";
+                }
+
+                if (errormessage !== "") {
+                    document.getElementById('errormessage').innerHTML = errormessage;  
+                    document.getElementById('errormessage').style.display = 'block';  
+                    event.preventDefault();  
+                    return;  
+                }
+
+                // If validation passes, submit the form via AJAX
+                var formData = new FormData(this); // Get form data
+
+                fetch("register-process.php", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    var messageBox = document.getElementById("errormessage");
+                    messageBox.style.display = "block"; // Show message box
+
+                    if (data.status === "error") {
+                        messageBox.style.color = "red";
+                        messageBox.innerText = data.message; // Show error message
+                    } else {
+                        messageBox.style.color = "green";
+                        messageBox.innerText = data.message; // Show success message
+                        
+                        // Automatically submit the form after success and redirect to login
+                        window.location.href = "login.php";
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+            });
+
+        </script>
+        
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    </body>
+</html>

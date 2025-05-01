@@ -2,8 +2,9 @@
     session_start();
     include 'config.php';
 
-    if (!isset($_GET['user_id'])) {
-        die("User ID not provided.");
+    if (!isset($_SESSION['User_ID'])) {
+        header("Location: login.php?error=1");
+        exit();
     }
     
     $user_id = intval($_GET['user_id']); 
@@ -82,16 +83,29 @@
         
                 <div class="collapse navbar-collapse" id="nav-collapse">
                     <div class="navbar-nav ms-auto">
-                        <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
-                            <i class="bi bi-person-fill me-2" id="user-icon"></i>
-                        </a>
-                        <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
-                        <a href="settings.php">
-                            <i class="bi bi-gear me-4" id="gear-icon"></i>
-                        </a>
-                        <a href="logout.php">   
-                            <button class="navbar-logout-button">Logout</button>
-                        </a>
+                        <?php if (!isset($_SESSION['User_ID']) || !isset($_SESSION['Username'])): ?>
+                            <a href="index.html">
+                                <button class="navbar-login-button me-4">Login</button>
+                            </a>
+                            <a href="register.php">
+                                <button class="navbar-signup-button">Sign Up</button>
+                            </a>
+                        <?php else: ?>
+                            <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
+                                <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                                <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
+                            </a>
+                            
+                            <a href="settings.php">
+                                <i class="bi bi-gear me-4" id="gear-icon"></i>
+                            </a>
+                            <a href="logout.php">   
+                                <button class="navbar-logout-button">Logout</button>
+                            </a>
+                            <a href="help.php">
+                                <i class="bi bi-question-circle"></i>
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -112,11 +126,28 @@
                 <h2 id="profile-title">Profile</h2>
                 <div class="profile-container">                
                     <div class="profile-top-row">
-                        <div class="profile-image">
-                            <?php if (!empty($profile_image)) : ?>
-                                <img src="<?php echo htmlspecialchars($profile_image); ?>" alt="Profile Picture" id="profile-image">
-                            <?php endif; ?>
+                        <div class="profile-image-container">
+                            <div class="profile-image" id="profile-image-wrapper" style="background-color: black;">
+                                <?php if (!empty($profile_image)) : ?>
+                                    <img src="<?php echo htmlspecialchars($profile_image); ?>" alt="Profile Picture" id="profile-image">
+                                <?php endif; ?>
+                            </div>
+
+                            <?php if ($user_id == $_SESSION["User_ID"]) { ?>
+                                <div class="edit-image-button-container mt-2">
+                                    <input type="file" id="image-upload" style="display: none;" accept="image/*">
+                                    <button class="edit-btn" id="edit-image-button" onclick="document.getElementById('image-upload').click();">
+                                        <i class="bi bi-pencil"></i> Edit Image
+                                    </button>
+                                    <?php if (!empty($profile_image)) : ?>
+                                        <button class="edit-btn btn-danger mt-2" id="remove-image-button">
+                                            <i class="bi bi-trash"></i> Remove Image
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
+                            <?php } ?>
                         </div>
+
                         <div class="profile-info">
                             <div class="profile-name">
                                 <?php echo htmlspecialchars($first_name . " " . $last_name . " (" . $username . ")"); ?>
@@ -130,14 +161,6 @@
                                 <?php } ?>
                             </div>
                         </div>
-                    </div>
-                    <div class="edit-image-button-container">
-                        <?php if ($user_id == $_SESSION["User_ID"]) { ?>
-                            <input type="file" id="image-upload" style="display: none;" accept="image/*">
-                            <button class="edit-btn" id="edit-image-button" onclick="document.getElementById('image-upload').click();">
-                                <i class="bi bi-pencil"></i> Edit Image
-                            </button>
-                        <?php } ?>
                     </div>
 
                     <div class="profile-bio-container">
@@ -229,6 +252,19 @@
 
         <script>
 
+            const navCollapse = document.getElementById('nav-collapse');
+            const navbar = document.querySelector('.navbar');
+
+            navCollapse.addEventListener('show.bs.collapse', () => {
+                navbar.classList.add('expanded');
+            });
+
+            navCollapse.addEventListener('hide.bs.collapse', () => {
+                navbar.classList.remove('expanded');
+            });
+
+            const CSRF_TOKEN = "<?php echo $_SESSION['csrf_token']; ?>";
+
             document.addEventListener("DOMContentLoaded", function () {
                 let followButton = document.getElementById("follow-button");
 
@@ -239,7 +275,8 @@
                         fetch("follow-user.php", {
                             method: "POST",
                             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                            body: `following_id=${userId}`
+                            body: `following_id=${userId}` +
+                                '&csrf_token=' + encodeURIComponent(CSRF_TOKEN)
                         })
                         .then(response => response.text())
                         .then(data => {
@@ -257,30 +294,96 @@
             });
 
 
-            document.getElementById("image-upload").addEventListener("change", function () {
-                let file = this.files[0];
-                if (file) {
-                    let formData = new FormData();
-                    formData.append("profile-image", file);
+            document.addEventListener("DOMContentLoaded", function () {
+                const imageUploadInput = document.getElementById("image-upload");
+                const removeBtn = document.getElementById("remove-image-button");
+                const profileImageWrapper = document.getElementById("profile-image-wrapper");
 
-                    // Send the image via AJAX
-                    fetch("update-profile.php", {
-                        method: "POST",
-                        body: formData
-                    })
-                    .then(response => response.text())
-                    .then(data => {
-                        if (data.startsWith("success")) {
-                            // Update the profile image dynamically
-                            let newImageSrc = data.split(":")[1];
-                            document.getElementById("profile-image").src = newImageSrc;
-                        } else {
-                            alert("Error updating profile image.");
-                        }
-                    })
-                    .catch(error => console.error("Error:", error));
+                // Handle image upload
+                if (imageUploadInput) {
+                    imageUploadInput.addEventListener("change", function () {
+                        const file = imageUploadInput.files[0];
+                        if (!file) return;
+
+                        const formData = new FormData();
+                        formData.append("profile-image", file);
+
+                        fetch("update-profile.php", {
+                            method: "POST",
+                            body: formData
+                        })
+                        .then(res => res.text())
+                        .then(result => {
+                            if (result.startsWith("success:")) {
+                                const imagePath = result.split(":")[1];
+                                let imgTag = document.getElementById("profile-image");
+
+                                if (imgTag) {
+                                    imgTag.src = imagePath;
+                                } else {
+                                    // If image tag doesn't exist, create it
+                                    imgTag = document.createElement("img");
+                                    imgTag.id = "profile-image";
+                                    imgTag.alt = "Profile Picture";
+                                    imgTag.src = imagePath;
+                                    profileImageWrapper.appendChild(imgTag);
+                                }
+
+                                // Add remove button if it doesn’t already exist
+                                if (!document.getElementById("remove-image-button")) {
+                                    const removeBtn = document.createElement("button");
+                                    removeBtn.className = "edit-btn btn-danger mt-2";
+                                    removeBtn.id = "remove-image-button";
+                                    removeBtn.innerHTML = '<i class="bi bi-trash"></i> Remove Image';
+                                    imageUploadInput.parentElement.appendChild(removeBtn);
+                                    bindRemoveButton(removeBtn);
+                                }
+                            } else {
+                                alert(result);
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            alert("Something went wrong uploading the image.");
+                        });
+                    });
+                }
+
+                // Function to bind remove button logic
+                function bindRemoveButton(btn) {
+                    btn.addEventListener("click", function () {
+                        if (!confirm("Are you sure you want to remove your profile picture?")) return;
+
+                        fetch("update-profile.php", {
+                            method: "POST",
+                            body: new URLSearchParams({ action: "remove_profile_image" })
+                        })
+                        .then(res => res.text())
+                        .then(result => {
+                            if (result.includes("success")) {
+                                const img = document.getElementById("profile-image");
+                                if (img) img.remove();
+
+                                const removeBtn = document.getElementById("remove-image-button");
+                                if (removeBtn) removeBtn.remove();
+                            } else {
+                                alert("Error: " + result);
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            alert("Something went wrong removing the image.");
+                        });
+                    });
+                }
+
+                // Initial bind if button exists at load
+                if (removeBtn) {
+                    bindRemoveButton(removeBtn);
                 }
             });
+
+
 
             // Edit occupation title functionality
             function editOccupation() {
@@ -311,7 +414,8 @@
                 fetch('update-profile.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `field=occupation_title&value=${encodeURIComponent(newOccupation)}`
+                    body: `field=occupation_title&value=${encodeURIComponent(newOccupation)}` +
+                        '&csrf_token=' + encodeURIComponent(CSRF_TOKEN)
                 })
                 .then(response => response.text())
                 .then(data => {
@@ -354,7 +458,8 @@
                 fetch('update-profile.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `field=bio_text&value=${encodeURIComponent(newBio)}`
+                    body: `field=bio_text&value=${encodeURIComponent(newBio)}` +
+                        '&csrf_token=' + encodeURIComponent(CSRF_TOKEN)
                 })
                 .then(response => response.text())
                 .then(data => {
@@ -410,7 +515,8 @@
                 fetch('update-profile.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `field=location_state&value=${encodeURIComponent(newLocation)}`
+                    body: `field=location_state&value=${encodeURIComponent(newLocation)}` +
+                        '&csrf_token=' + encodeURIComponent(CSRF_TOKEN)
                 })
                 .then(response => response.text())
                 .then(data => {

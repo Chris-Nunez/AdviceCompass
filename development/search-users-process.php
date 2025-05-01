@@ -2,6 +2,11 @@
 session_start();
 include 'config.php';
 
+if (!isset($_SESSION['User_ID'])) {
+    header("Location: login.php?error=1");
+    exit();
+}
+
 $searchQuery = isset($_GET['query']) ? $_GET['query'] : '';
 
 $query = $conn->prepare("SELECT User_ID, Username, Profile_Image 

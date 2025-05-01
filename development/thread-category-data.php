@@ -5,6 +5,11 @@ if (!isset($_GET['category_id'])) {
     die("No category selected.");
 }
 
+if (!isset($_SESSION['User_ID'])) {
+    header("Location: login.php?error=1");
+    exit();
+}
+
 $category_id = intval($_GET['category_id']);  
 
 $query = $conn->prepare("SELECT Threads.Thread_ID, Threads.Thread_Title, Threads.Thread_Text, DATE(Threads.Thread_Date_Time) AS Thread_Date, Users.Username, Users.User_ID 

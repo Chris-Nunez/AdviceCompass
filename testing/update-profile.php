@@ -3,12 +3,38 @@ session_start();
 include 'config.php'; 
 
 if (!isset($_SESSION['User_ID'])) {
-    die("Unauthorized access.");
+    header("Location: login.php?error=1");
+    exit();
 }
 
 $user_id = $_SESSION['User_ID'];
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+    if (isset($_POST['action']) && $_POST['action'] === 'remove_profile_image') {
+        // Get the current profile image path from DB
+        $query = $conn->prepare("SELECT Profile_Image FROM Users WHERE User_ID = ?");
+        $query->bind_param("i", $user_id);
+        $query->execute();
+        $query->bind_result($currentImage);
+        $query->fetch();
+        $query->close();
+    
+        // Remove image file if it exists
+        if (!empty($currentImage) && file_exists($currentImage)) {
+            unlink($currentImage);
+        }
+    
+        // Update DB: set Profile_Image to NULL
+        $query = $conn->prepare("UPDATE Users SET Profile_Image = NULL WHERE User_ID = ?");
+        $query->bind_param("i", $user_id);
+        if ($query->execute()) {
+            echo "success: image removed";
+        } else {
+            echo "error: could not remove image";
+        }
+        $query->close();
+    }
 
     // Handle Profile Image Upload
     if (isset($_FILES["profile-image"]) && !empty($_FILES["profile-image"]["name"])) {
@@ -26,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 if ($query->execute()) {
                     echo "success:" . $profileImagePath;
                 } else {
-                    echo "error updating profile image.";
+                    echo "error updating profile image: " . $query->error;
                 }
                 $query->close();
             } else {

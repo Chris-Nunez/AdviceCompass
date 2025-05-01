@@ -2,6 +2,11 @@
     session_start();
     include 'config.php';
     include 'favorite-threads-data.php';
+
+    if (!isset($_SESSION['User_ID'])) {
+        header("Location: login.php?error=1");
+        exit();
+    }
 ?>
 
 <!DOCTYPE html>
@@ -9,7 +14,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Favorite Categories</title>
+        <title>Favorite Threads</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <link rel="stylesheet" href="styles.css">
@@ -28,16 +33,29 @@
         
                 <div class="collapse navbar-collapse" id="nav-collapse">
                     <div class="navbar-nav ms-auto">
-                        <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
-                            <i class="bi bi-person-fill me-2" id="user-icon"></i>
-                        </a>
-                        <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
-                        <a href="settings.php">
-                            <i class="bi bi-gear me-4" id="gear-icon"></i>
-                        </a>
-                        <a href="logout.php">   
-                            <button class="navbar-logout-button">Logout</button>
-                        </a>
+                        <?php if (!isset($_SESSION['User_ID']) || !isset($_SESSION['Username'])): ?>
+                            <a href="index.html">
+                                <button class="navbar-login-button me-4">Login</button>
+                            </a>
+                            <a href="register.php">
+                                <button class="navbar-signup-button">Sign Up</button>
+                            </a>
+                        <?php else: ?>
+                            <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
+                                <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                                <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
+                            </a>
+                            
+                            <a href="settings.php">
+                                <i class="bi bi-gear me-4" id="gear-icon"></i>
+                            </a>
+                            <a href="logout.php">   
+                                <button class="navbar-logout-button">Logout</button>
+                            </a>
+                            <a href="help.php">
+                                <i class="bi bi-question-circle"></i>
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -68,45 +86,50 @@
                 </div>
 
                 <div class="row mt-5" id="threads-container">
-                    <?php
-                    // Loop through the categories and create Bootstrap columns
-                    for ($i = 0; $i < count($favorite_threads); $i++) {
-                    ?>
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-                            <div class="thread-container">
-                                <div class="thread-title">
-                                    <h5><?php echo htmlspecialchars($favorite_threads[$i]); ?></h5>
+                    <?php if (count($favorite_threads) > 0) { ?>
+                        <?php for ($i = 0; $i < count($favorite_threads); $i++) { ?>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+                                <div class="thread-container">
+                                    <div class="thread-title">
+                                        <h5><?php echo htmlspecialchars($favorite_threads[$i]); ?></h5>
+                                    </div>
+
+                                    <div class="thread-username">
+                                        <p>Made by: 
+                                            <a href="view-profile.php?user_id=<?php echo urlencode($favorite_thread_user_ids[$i]); ?>">
+                                                <?php echo htmlspecialchars($favorite_threads_usernames[$i]); ?>
+                                            </a>
+                                        </p>
+                                    </div>
+
+                                    <div class="thread-category">
+                                        <p>Category: <?php echo htmlspecialchars($favorite_thread_category[$i]); ?></p>
+                                    </div>
+
+                                    <div class="thread-text">
+                                        <p><?php echo htmlspecialchars(mb_strimwidth($favorite_thread_text[$i], 0, 27, '...')); ?></p>
+                                    </div>
+
+                                    <div class="thread-year-created">
+                                        <p>Created <?php echo htmlspecialchars($favorite_thread_date[$i]); ?></p>
+                                    </div>
+
+                                    <a href="thread.php?thread_id=<?php echo urlencode($favorite_thread_id[$i]); ?>">
+                                        <button class="explore-thread-categories-button">Go <i class="bi bi-arrow-right"></i></button>
+                                    </a>
                                 </div>
+                            </div>
+                        <?php } ?>
+                    <?php } else { ?>
+                </div> 
 
-                                <div class="thread-username">
-                                    <p>Made by: 
-                                        <a href="view-profile.php?user_id=<?php echo urlencode($favorite_thread_user_ids[$i]); ?>">
-                                            <?php echo htmlspecialchars($favorite_threads_usernames[$i]); ?>
-                                        </a>
-                                    </p>
-                                </div>
-
-                                <div class="thread-category">
-                                    <p> Category: <?php echo htmlspecialchars($favorite_thread_category[$i]); ?> </p>
-                                </div>
-
-                                <div class="thread-text">
-                                    <p><?php echo htmlspecialchars($favorite_thread_text[$i]); ?></p>
-                                </div>
-
-                                <div class="thread-year-created">
-                                    <p>Created <?php echo htmlspecialchars($favorite_thread_year[$i]); ?></p>
-                                </div>
-
-                                <a href="thread.php?thread_id=<?php echo urlencode($favorite_thread_id[$i]); ?>">
-                                    <button class="explore-thread-categories-button">Go <i class="bi bi-arrow-right"></i></button>
-                                </a>
-
+                        <div class="no-threads-container text-center mt-5">
+                            <div class="no-threads-text">
+                                <p>No favorite threads.</p>
                             </div>
                         </div>
-                    <?php } ?>
-                </div>
 
+                    <?php } ?>
             </div>
         </section>
 
@@ -119,6 +142,18 @@
         </section>
 
         <script>
+
+            const navCollapse = document.getElementById('nav-collapse');
+            const navbar = document.querySelector('.navbar');
+
+            navCollapse.addEventListener('show.bs.collapse', () => {
+                navbar.classList.add('expanded');
+            });
+
+            navCollapse.addEventListener('hide.bs.collapse', () => {
+                navbar.classList.remove('expanded');
+            });
+
             document.getElementById('thread-search').addEventListener('input', function () {
                 let searchQuery = this.value.trim();
 

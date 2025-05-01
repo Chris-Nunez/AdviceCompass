@@ -5,6 +5,17 @@ include 'config.php';
 header('Content-Type: application/json'); // Set response type to JSON
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    if (!isset($_POST['csrf_token']) || !isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+        echo json_encode(["status" => "error", "message" => "Invalid CSRF token."]);
+        exit();
+    }
+
+    if (!isset($_SESSION['User_ID'])) {
+        header("Location: login.php?error=1");
+        exit();
+    }
+    
     $category_name = $_POST['category-name'];
     $category_description = $_POST['category-description'];
     $user_id = $_SESSION['User_ID'];

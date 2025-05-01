@@ -6,6 +6,11 @@ if (!isset($_GET['user_id'])) {
     die("User ID not provided.");
 }
 
+if (!isset($_SESSION['User_ID'])) {
+    header("Location: login.php?error=1");
+    exit();
+}
+
 $user_id = intval($_GET['user_id']);
 
 // Query to fetch all users that the logged-in user is following
@@ -57,23 +62,36 @@ $conn->close();
         
                 <div class="collapse navbar-collapse" id="nav-collapse">
                     <div class="navbar-nav ms-auto">
-                        <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
-                            <i class="bi bi-person-fill me-2" id="user-icon"></i>
-                        </a>
-                        <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
-                        <a href="settings.php">
-                            <i class="bi bi-gear me-4" id="gear-icon"></i>
-                        </a>
-                        <a href="logout.php">   
-                            <button class="navbar-logout-button">Logout</button>
-                        </a>
+                        <?php if (!isset($_SESSION['User_ID']) || !isset($_SESSION['Username'])): ?>
+                            <a href="index.html">
+                                <button class="navbar-login-button me-4">Login</button>
+                            </a>
+                            <a href="register.php">
+                                <button class="navbar-signup-button">Sign Up</button>
+                            </a>
+                        <?php else: ?>
+                            <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
+                                <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                                <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
+                            </a>
+                            
+                            <a href="settings.php">
+                                <i class="bi bi-gear me-4" id="gear-icon"></i>
+                            </a>
+                            <a href="logout.php">   
+                                <button class="navbar-logout-button">Logout</button>
+                            </a>
+                            <a href="help.php">
+                                <i class="bi bi-question-circle"></i>
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </nav>
 
         <section id="following">
-            <div class="main-container">
+            <div class="main-container px-5">
                 <div class="top-container d-flex align-items-center justify-content-between">
                     
                     <!-- Left Section: Back & Create Category Buttons -->
@@ -85,12 +103,12 @@ $conn->close();
 
                     <!-- Right Section: Search Bar -->
                     <div class="search-container flex-1 d-flex justify-content-end">
-                        <input type="text" class="form-control mx-2" placeholder="Search categories..." id="category-search" style="width: 250px;">
+                        <input type="text" class="form-control mx-2" placeholder="Search following..." id="following-search" style="width: 250px;">
                     </div>
 
                 </div>
                 <h2 id="following-title">Following</h2>
-                <div class="row mt-5">
+                <div class="row mt-5" id="following-container">
                     <?php if (count($following_user_id) > 0) { ?>
                         <?php for ($i = 0; $i < count($following_user_id); $i++) { ?>
                             <div class="col-12 col-sm-6 col-md-4 col-lg-2">
@@ -110,15 +128,14 @@ $conn->close();
                             </div>
                         <?php } ?>
                     <?php } else { ?>
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-                            <div class="no-following-container">
-                                <div class="no-following-text">
-                                    <p>You are not following anyone.</p>
-                                </div> 
-                            </div>
-                        </div>
-                    <?php } ?>
                 </div>
+                        <div class="no-following-container">
+                            <div class="no-following-text">
+                                <p>No users found.</p>
+                            </div> 
+                        </div>
+                        
+                    <?php } ?>
             </div>
         </section>
 
@@ -130,6 +147,35 @@ $conn->close();
               </div>
             </div>
         </section>
+
+        <script>
+
+            const navCollapse = document.getElementById('nav-collapse');
+            const navbar = document.querySelector('.navbar');
+
+            navCollapse.addEventListener('show.bs.collapse', () => {
+                navbar.classList.add('expanded');
+            });
+
+            navCollapse.addEventListener('hide.bs.collapse', () => {
+                navbar.classList.remove('expanded');
+            });
+
+            document.getElementById('following-search').addEventListener('input', function () {
+                let searchQuery = this.value.trim();
+
+                let xhr = new XMLHttpRequest();
+                xhr.open('GET', 'search-following.php?query=' + encodeURIComponent(searchQuery), true);
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        document.getElementById('following-container').innerHTML = xhr.responseText;
+                    }
+                };
+
+                xhr.send();
+            });
+        </script>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>

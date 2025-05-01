@@ -2,6 +2,11 @@
     session_start();
     include 'config.php';
 
+    if (!isset($_SESSION['User_ID'])) {
+        header("Location: login.php?error=1");
+        exit();
+    }
+
     // Ensure user is logged in
     if (!isset($_SESSION['User_ID'])) {
         die("Unauthorized access");
@@ -9,7 +14,7 @@
 
     $user_id = $_SESSION['User_ID'];
 
-    $query = $conn->prepare("SELECT Threads.Thread_ID, Threads.Thread_Title, Threads.Thread_Text, Threads.Thread_Date_Time, Users.User_ID, Users.Username, IndustryThreadCategories.Industry_Thread_Category_ID, IndustryThreadCategories.Industry_Thread_Category_Name
+    $query = $conn->prepare("SELECT Threads.Thread_ID, Threads.Thread_Title, Threads.Thread_Text, DATE(Threads.Thread_Date_Time) AS Thread_Date, Users.User_ID, Users.Username, IndustryThreadCategories.Industry_Thread_Category_ID, IndustryThreadCategories.Industry_Thread_Category_Name
                             FROM FavoriteThreads 
                             JOIN Threads ON FavoriteThreads.Thread_ID = Threads.Thread_ID
                             JOIN Users ON Threads.User_ID = Users.User_ID
@@ -34,7 +39,7 @@
         $favorite_threads_usernames[] = $row['Username'];
         $favorite_thread_category[] = $row['Industry_Thread_Category_Name'];
         $favorite_thread_text[] = $row['Thread_Text'];
-        $favorite_thread_year[] = date("Y", strtotime($row['Thread_Date_Time']));
+        $favorite_thread_date[] = $row['Thread_Date'];
         $favorite_thread_id[] = $row['Thread_ID'];
     }
 

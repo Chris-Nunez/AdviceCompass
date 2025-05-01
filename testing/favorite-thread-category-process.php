@@ -3,17 +3,34 @@ session_start();
 include 'config.php';
 
 if (!isset($_SESSION['User_ID'])) {
-    echo json_encode(["success" => false, "message" => "User not logged in."]);
-    exit;
+    header("Location: login.php?error=1");
+    exit();
+}
+
+if (!isset($_POST['csrf_token']) || !isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+    echo json_encode(["status" => "error", "message" => "Invalid CSRF token."]);
+    exit();
 }
 
 if (!isset($_POST['category_id'])) {
     echo json_encode(["success" => false, "message" => "Category ID is missing."]);
-    exit;
+    exit();
 }
 
 $user_id = $_SESSION['User_ID'];
 $category_id = intval($_POST['category_id']);
+
+$category_check = $conn->prepare("SELECT 1 FROM IndustryThreadCategories WHERE Industry_Thread_Category_ID = ?");
+$category_check->bind_param("i", $category_id);
+$category_check->execute();
+$category_check->store_result();
+
+if ($category_check->num_rows === 0) {
+    $category_check->close();
+    die("Invalid category.");
+}
+$categoryCheck->close();
+
 
 // Check if the category is already favorited
 $query = $conn->prepare("SELECT * FROM UserPreferredCategories WHERE User_ID = ? AND Industry_Thread_Category_ID = ?");

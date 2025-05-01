@@ -1,6 +1,11 @@
 <?php
 include 'config.php';
 
+if (!isset($_SESSION['User_ID'])) {
+    header("Location: login.php?error=1");
+    exit();
+}
+
 
 $query = $conn->prepare("SELECT UserPreferredCategories.Industry_Thread_Category_ID, IndustryThreadCategories.Industry_Thread_Category_Name, Users.Username, Users.User_ID, COUNT(Threads.Thread_ID) AS Thread_Count, YEAR(IndustryThreadCategories.Industry_Thread_Category_Year) AS Industry_Thread_Category_Year FROM UserPreferredCategories
                         INNER JOIN IndustryThreadCategories ON UserPreferredCategories.Industry_Thread_category_ID = IndustryThreadCategories.Industry_Thread_Category_ID

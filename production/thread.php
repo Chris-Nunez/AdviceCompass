@@ -2,12 +2,16 @@
     session_start();
     include 'config.php';
 
-    // Check if category_id exists
-    if (!isset($_GET['thread_id'])) {
-        die("No category selected.");
+    if (!isset($_SESSION['User_ID'])) {
+        header("Location: login.php?error=1");
+        exit();
     }
 
     $thread_id = intval($_GET['thread_id']);  
+
+    if (!isset($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
 
     // Fetch category details
     $query = $conn->prepare("SELECT * FROM Threads 
@@ -40,7 +44,6 @@
 
     include 'fetch-comments.php';
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -65,16 +68,29 @@
         
                 <div class="collapse navbar-collapse" id="nav-collapse">
                     <div class="navbar-nav ms-auto">
-                        <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
-                            <i class="bi bi-person-fill me-2" id="user-icon"></i>
-                        </a>
-                        <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
-                        <a href="settings.php">
-                            <i class="bi bi-gear me-4" id="gear-icon"></i>
-                        </a>
-                        <a href="logout.php">   
-                            <button class="navbar-logout-button">Logout</button>
-                        </a>
+                        <?php if (!isset($_SESSION['User_ID']) || !isset($_SESSION['Username'])): ?>
+                            <a href="index.html">
+                                <button class="navbar-login-button me-4">Login</button>
+                            </a>
+                            <a href="register.php">
+                                <button class="navbar-signup-button">Sign Up</button>
+                            </a>
+                        <?php else: ?>
+                            <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
+                                <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                                <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
+                            </a>
+                            
+                            <a href="settings.php">
+                                <i class="bi bi-gear me-4" id="gear-icon"></i>
+                            </a>
+                            <a href="logout.php">   
+                                <button class="navbar-logout-button">Logout</button>
+                            </a>
+                            <a href="help.php">
+                                <i class="bi bi-question-circle"></i>
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -104,98 +120,112 @@
                     </div>
                 </div>
 
+            
                 <div class="explore-categories-title">
-                    <h1><?php echo htmlspecialchars($thread['Thread_Title']); ?></h1>
+                    <h1>Thread</h1>
                 </div>  
 
-                <div class="explore-categories-title">
-                    <h3>
-                        <a href="view-profile.php?user_id=<?php echo urlencode($thread['User_ID']); ?>">
-                            <?php echo htmlspecialchars($thread['Username']); ?>
-                        </a>
-                    </h3>
-                </div> 
-
                 <div class="thread">
-                    <div class="view-thread-text">
-                        <p><?php echo htmlspecialchars($thread['Thread_Text']); ?></p>
-                    </div>
-
-                    <?php if (!empty($thread['Thread_Image'])): ?>
-                        <div class="view-thread-image">
-                            <img src="<?php echo htmlspecialchars($thread['Thread_Image']); ?>" alt="Thread Image">
+                    <div class="main-thread-box">
+                        <div class="main-thread-header">
+                            <h2><?php echo htmlspecialchars($thread['Thread_Title']); ?></h2>
                         </div>
-                    <?php endif; ?>
-
-
-                    <div class="thread-actions">
-                        <a href="#" class="action-button like-thread" data-thread-id="<?php echo $thread['Thread_ID']; ?>" data-is-like="1">
-                            <i class="bi bi-hand-thumbs-up"></i> <span id="thread-like-count"><?php echo $thread['Thread_Like_Count']; ?></span>
-                        </a>
-
-                        <a href="#" class="action-button dislike-thread" data-thread-id="<?php echo $thread['Thread_ID']; ?>" data-is-like="0">
-                            <i class="bi bi-hand-thumbs-down"></i> <span id="thread-dislike-count"><?php echo $thread['Thread_Dislike_Count']; ?></span>
-                        </a>
-
-                        <button class="action-button comment" id="comment-button">
-                            <i class="bi bi-chat-dots"></i> <?php echo $thread['Thread_Comment_Count']; ?>
-                        </button>
-                    </div>
-
-                </div>
-
-                <!-- Comment Input Section (Initially Hidden) -->
-                <div id="comment-box" style="display: none; margin-top: 10px;">
-                    <textarea id="comment-text" class="form-control" placeholder="Write your comment..."></textarea>
-                    <button id="submit-comment" class="btn btn-primary mt-2">Post Comment</button>
-                </div>
-                
-                <?php 
-                for ($i = 0; $i < count($comment_id); $i++) {
-                ?>
-                    <div class="comments-container">
-                        <div class="comment-username">
-                            <p><?php echo htmlspecialchars($comment_username[$i]); ?> </p>
+                        <div class="comment-header">
+                            <div class="comment-user-info">
+                                <a href="view-profile.php?user_id=<?php echo urlencode($thread['User_ID']); ?>">
+                                    <div class="follower-image">
+                                        <?php if (!empty($thread['Profile_Image'])) : ?>
+                                            <img src="<?php echo htmlspecialchars($thread['Profile_Image']); ?>" alt="Profile Picture" class="profile-pic">
+                                        <?php endif; ?>
+                                    </div>
+                                    <strong><?php echo htmlspecialchars($thread['Username']); ?></strong>
+                                </a>
+                            </div>
+                            <span class="comment-date-time"><?php echo htmlspecialchars($thread["Thread_Date_Time"]); ?></span>
                         </div>
 
-                        <div class="comment">
-                            <p><?php echo htmlspecialchars($comment_text[$i]); ?> </p>
+                        <div class="view-thread-text">
+                            <p><?php echo htmlspecialchars($thread['Thread_Text']); ?></p>
                         </div>
 
-                        <div class="comment-date-time">
-                            <p><?php echo htmlspecialchars($comment_date_time[$i]); ?> </p>
-                        </div>
+                        <?php if (!empty($thread['Thread_Image'])): ?>
+                            <div class="view-thread-image">
+                                <img src="<?php echo htmlspecialchars($thread['Thread_Image']); ?>" alt="Thread Image">
+                            </div>
+                        <?php endif; ?>
 
                         <div class="thread-actions">
-                            <a href="comment-like.php?comment_id=<?php echo $comment_id[$i]; ?>&is_like=1" class="action-button like" id="like-btn-<?php echo $comment_id[$i]; ?>" data-comment-id="<?php echo $comment_id[$i]; ?>" data-is-like="1">
-                                <i class="bi bi-hand-thumbs-up"></i> <span id="like-count-<?php echo $comment_id[$i]; ?>"><?php echo $comment_like_count[$i]; ?></span>
+                            <a href="#" class="action-button like-thread" data-thread-id="<?php echo $thread['Thread_ID']; ?>" data-is-like="1">
+                                <i class="bi bi-hand-thumbs-up"></i>
+                                <span id="thread-like-count"><?php echo $thread['Thread_Like_Count']; ?></span>
                             </a>
-
-                            <a href="comment-like.php?comment_id=<?php echo $comment_id[$i]; ?>&is_like=0" class="action-button dislike" id="dislike-btn-<?php echo $comment_id[$i]; ?>" data-comment-id="<?php echo $comment_id[$i]; ?>" data-is-like="0">
-                                <i class="bi bi-hand-thumbs-down"></i> <span id="dislike-count-<?php echo $comment_id[$i]; ?>"><?php echo $comment_dislike_count[$i]; ?></span>
+                            <a href="#" class="action-button dislike-thread" data-thread-id="<?php echo $thread['Thread_ID']; ?>" data-is-like="0">
+                                <i class="bi bi-hand-thumbs-down"></i>
+                                <span id="thread-dislike-count"><?php echo $thread['Thread_Dislike_Count']; ?></span>
                             </a>
-
-                            <button class="action-button comment" id="reply-button-<?php echo $comment_id[$i]; ?>">
-                                <i class="bi bi-chat-dots"></i> <?php echo $comment_reply_count[$i]; ?>
+                            <button class="action-button comment" id="comment-button">
+                                <i class="bi bi-chat-dots"></i> <?php echo $thread['Thread_Comment_Count']; ?>
                             </button>
-
-                            <button class="view-replies-btn" id="view-replies-<?php echo $comment_id[$i]; ?>">View Replies</button>
                         </div>
-            
                     </div>
 
-                    <!-- Reply Box (Initially Hidden) -->
-                    <div id="reply-box-<?php echo $comment_id[$i]; ?>" class="reply-box" style="display: none; margin-top: 10px;">
-                        <textarea id="reply-text-<?php echo $comment_id[$i]; ?>" class="form-control" placeholder="Write your reply..."></textarea>
-                        <button class="btn btn-primary submit-reply-btn" id="submit-reply-<?php echo $comment_id[$i]; ?>">Post Reply</button>
+                    <div id="comment-box" style="display: none; margin-top: 10px;">
+                        <textarea id="comment-text" class="form-control" placeholder="Write your comment..."></textarea>
+                        <button id="submit-comment" class="btn btn-primary mt-2">Post Comment</button>
                     </div>
 
-                    <div class="replies-container" id="replies-<?php echo $comment_id[$i]; ?>" style="display: none;">
-                        <!-- Replies will be loaded dynamically here -->
+                    <div class="comments-container">
+                        <?php for ($i = 0; $i < count($comment_id); $i++) { ?>
+                            <div class="comment-row">
+                                <div class="comment-indent-arrow">
+                                    <i class="bi bi-arrow-return-right"></i>
+                                </div>
+
+                                <div class="comment-thread">
+                                    <div class="comment-header">
+                                        <div class="comment-user-info">
+                                            <a href="view-profile.php?user_id=<?php echo urlencode($comment_user_id[$i]); ?>">
+                                                <div class="follower-image">
+                                                    <?php if (!empty($comment_profile_image[$i])) : ?>
+                                                        <img src="<?php echo htmlspecialchars($comment_profile_image[$i]); ?>" alt="Profile Picture" class="profile-pic">
+                                                    <?php endif; ?>
+                                                </div>
+                                                <strong><?php echo htmlspecialchars($comment_username[$i]); ?></strong>
+                                            </a>
+                                        </div>
+                                        <span class="comment-date-time"><?php echo htmlspecialchars($comment_date_time[$i]); ?></span>
+                                    </div>
+
+                                    <div class="comment-body">
+                                        <p><?php echo htmlspecialchars($comment_text[$i]); ?></p>
+                                    </div>
+
+                                    <div class="comment-actions thread-actions">
+                                        <a href="#" class="action-button like" id="like-btn-<?php echo $comment_id[$i]; ?>" data-comment-id="<?php echo $comment_id[$i]; ?>" data-is-like="1">
+                                            <i class="bi bi-hand-thumbs-up"></i> 
+                                            <span id="like-count-<?php echo $comment_id[$i]; ?>"><?php echo $comment_like_count[$i]; ?></span>
+                                        </a>
+                                        <a href="#" class="action-button dislike" id="dislike-btn-<?php echo $comment_id[$i]; ?>" data-comment-id="<?php echo $comment_id[$i]; ?>" data-is-like="0">
+                                            <i class="bi bi-hand-thumbs-down"></i> 
+                                            <span id="dislike-count-<?php echo $comment_id[$i]; ?>"><?php echo $comment_dislike_count[$i]; ?></span>
+                                        </a>
+                                        <button class="action-button comment" id="reply-button-<?php echo $comment_id[$i]; ?>">
+                                            <i class="bi bi-chat-dots"></i> <?php echo $comment_reply_count[$i]; ?>
+                                        </button>
+                                        <button class="view-replies-btn" id="view-replies-<?php echo $comment_id[$i]; ?>">View Replies</button>
+                                    </div>
+
+                                    <div id="reply-box-<?php echo $comment_id[$i]; ?>" class="reply-box" style="display: none;">
+                                        <textarea id="reply-text-<?php echo $comment_id[$i]; ?>" class="form-control" placeholder="Write your reply..."></textarea>
+                                        <button class="btn btn-primary submit-reply-btn" id="submit-reply-<?php echo $comment_id[$i]; ?>">Post Reply</button>
+                                    </div>
+
+                                    <div class="replies-container" id="replies-<?php echo $comment_id[$i]; ?>"></div>
+                                </div>
+                            </div>
+                        <?php } ?>
                     </div>
-
-                <?php } ?>
-
+                </div>      
             </div>
         </section>
 
@@ -208,6 +238,19 @@
         </section>
 
         <script>
+
+            const navCollapse = document.getElementById('nav-collapse');
+            const navbar = document.querySelector('.navbar');
+
+            navCollapse.addEventListener('show.bs.collapse', () => {
+                navbar.classList.add('expanded');
+            });
+
+            navCollapse.addEventListener('hide.bs.collapse', () => {
+                navbar.classList.remove('expanded');
+            });
+
+            const CSRF_TOKEN = "<?php echo $_SESSION['csrf_token']; ?>";
 
             document.addEventListener("DOMContentLoaded", function() {
                 let button = document.getElementById('favorite-thread-btn');
@@ -229,7 +272,8 @@
                     fetch('favorite-thread-process.php', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: 'thread_id=' + encodeURIComponent(threadId)
+                        body: 'thread_id=' + encodeURIComponent(threadId) +
+                            '&csrf_token=' + encodeURIComponent(CSRF_TOKEN)
                     })
                     .then(response => response.json())
                     .then(data => {
@@ -260,7 +304,8 @@
                                 headers: {
                                     "Content-Type": "application/x-www-form-urlencoded"
                                 },
-                                body: "thread_id=" + encodeURIComponent(threadId)
+                                body: "thread_id=" + encodeURIComponent(threadId) +
+                                    '&csrf_token=' + encodeURIComponent(CSRF_TOKEN)
                             })
                             .then(response => response.text())
                             .then(data => {
@@ -295,7 +340,8 @@
                                 headers: {
                                     "Content-Type": "application/x-www-form-urlencoded",
                                 },
-                                body: `thread_id=${threadId}&is_like=${isLike}`
+                                body: `thread_id=${threadId}&is_like=${isLike}` +
+                                    '&csrf_token=' + encodeURIComponent(CSRF_TOKEN)
                             })
                             .then(response => response.json())
                             .then(data => {
@@ -339,7 +385,8 @@
                 fetch('submit-comment.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: 'thread_id=' + encodeURIComponent(threadId) + '&comment_text=' + encodeURIComponent(commentText)
+                    body: 'thread_id=' + encodeURIComponent(threadId) + '&comment_text=' + encodeURIComponent(commentText) +
+                        '&csrf_token=' + encodeURIComponent(CSRF_TOKEN)
                 })
                 .then(res => res.json())
                 .then(data => {
@@ -369,7 +416,8 @@
                             headers: {
                                 "Content-Type": "application/x-www-form-urlencoded",
                             },
-                            body: `comment_id=${commentId}&is_like=${isLike}`
+                            body: `comment_id=${commentId}&is_like=${isLike}` +
+                                '&csrf_token=' + encodeURIComponent(CSRF_TOKEN)
                         })
                         .then(response => response.json())
                         .then(data => {
@@ -419,7 +467,8 @@
                     fetch('submit-reply.php', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: 'comment_id=' + encodeURIComponent(commentId) + '&reply_text=' + encodeURIComponent(replyText)
+                        body: 'comment_id=' + encodeURIComponent(commentId) + '&reply_text=' + encodeURIComponent(replyText) +
+                            '&csrf_token=' + encodeURIComponent(CSRF_TOKEN)
                     })
                     .then(res => res.json())
                     .then(data => {
@@ -456,18 +505,41 @@
                                     // Loop through the replies and display them
                                     data.forEach(reply => {
                                         let replyDiv = document.createElement('div');
-                                        replyDiv.classList.add('reply');
+                                        replyDiv.classList.add('comment-row');
+
+                                        const profileImgHTML = reply.profile_image
+                                            ? `<img src="${reply.profile_image}" alt="Profile Picture" class="profile-pic">`
+                                            : '';
+
                                         replyDiv.innerHTML = `
-                                            <div class="reply-username"><p>${reply.username}</p></div>
-                                            <div class="reply-text"><p>${reply.text}</p></div>
-                                            <div class="reply-date-time"><p>${reply.date_time}</p></div>
-                                            <div class="reply-actions">
-                                                <a href="#" class="action-button like" data-reply-id="${reply.reply_id}" data-is-like="1">
-                                                    <i class="bi bi-hand-thumbs-up"></i><span id="like-count-${reply.reply_id}">${reply.like_count}</span>
-                                                </a>
-                                                <a href="#" class="action-button dislike" data-reply-id="${reply.reply_id}" data-is-like="0">
-                                                    <i class="bi bi-hand-thumbs-down"></i><span id="dislike-count-${reply.reply_id}">${reply.dislike_count}</span>
-                                                </a>
+                                            <div class="comment-indent-arrow">
+                                                <i class="bi bi-arrow-return-right"></i>
+                                            </div>
+                                            <div class="comment-thread">
+                                                <div class="comment-header">
+                                                    <div class="comment-user-info">
+                                                        <a href="view-profile.php?user_id=${reply.user_id}">
+                                                            <div class="follower-image">
+                                                                ${profileImgHTML}
+                                                            </div>
+                                                            <strong>${reply.username}</strong>
+                                                        </a>
+                                                    </div>
+                                                    <span class="comment-date-time">${reply.date_time}</span>
+                                                </div>
+                                                <div class="comment-body">
+                                                    <p>${reply.text}</p>
+                                                </div>
+                                                <div class="comment-actions thread-actions">
+                                                    <a href="#" class="action-button like" data-reply-id="${reply.reply_id}" data-is-like="1">
+                                                        <i class="bi bi-hand-thumbs-up"></i> 
+                                                        <span id="like-count-${reply.reply_id}">${reply.like_count}</span>
+                                                    </a>
+                                                    <a href="#" class="action-button dislike" data-reply-id="${reply.reply_id}" data-is-like="0">
+                                                        <i class="bi bi-hand-thumbs-down"></i> 
+                                                        <span id="dislike-count-${reply.reply_id}">${reply.dislike_count}</span>
+                                                    </a>
+                                                </div>
                                             </div>
                                         `;
                                         repliesContainer.appendChild(replyDiv);
@@ -498,7 +570,8 @@
                         headers: {
                             "Content-Type": "application/x-www-form-urlencoded"
                         },
-                        body: `reply_id=${replyId}&is_like=${isLike}`
+                        body: `reply_id=${replyId}&is_like=${isLike}` +
+                            '&csrf_token=' + encodeURIComponent(CSRF_TOKEN)
                     })
                     .then(response => response.json())
                     .then(data => {

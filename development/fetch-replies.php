@@ -1,6 +1,11 @@
 <?php
 include 'config.php';
 
+if (!isset($_SESSION['User_ID'])) {
+    header("Location: login.php?error=1");
+    exit();
+}
+
 if (isset($_GET['comment_id'])) {
     $comment_id = (int) $_GET['comment_id'];
 

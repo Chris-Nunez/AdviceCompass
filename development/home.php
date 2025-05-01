@@ -1,6 +1,11 @@
 <?php
     include 'config.php';
     include 'home-data.php';
+
+    if (!isset($_SESSION['User_ID'])) {
+        header("Location: login.php?error=1");
+        exit();
+    }
 ?>
 
 <!DOCTYPE html>
@@ -28,7 +33,7 @@
                 <div class="collapse navbar-collapse" id="nav-collapse">
                     <div class="navbar-nav ms-auto">
                         <?php if (!isset($_SESSION['User_ID']) || !isset($_SESSION['Username'])): ?>
-                            <a href="index.html">
+                            <a href="login.php">
                                 <button class="navbar-login-button me-4">Login</button>
                             </a>
                             <a href="register.php">
@@ -37,13 +42,17 @@
                         <?php else: ?>
                             <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
                                 <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                                <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
                             </a>
-                            <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
+                            
                             <a href="settings.php">
                                 <i class="bi bi-gear me-4" id="gear-icon"></i>
                             </a>
                             <a href="logout.php">   
                                 <button class="navbar-logout-button">Logout</button>
+                            </a>
+                            <a href="help.php">
+                                <i class="bi bi-question-circle"></i>
                             </a>
                         <?php endif; ?>
                     </div>
@@ -59,8 +68,7 @@
                 <div class="row mt-5">
                     <!-- LEFT: Explore Categories -->
                     <div class="col-12 col-lg-6">
-                        <div class="home-container">
-                            
+                        <div class="home-container">    
                             <div class="home-explore-categories-title">
                                 <h2>Explore Page</h2>
                                 <h5>View the latest thread categories!</h5>
@@ -92,15 +100,15 @@
                                             </div>
                                         </div>
                                     <?php } ?>
-                            </div>
                                 <?php } else { ?>
+                            
                                     <div class="no-threads-container text-center mt-5">
                                         <div class="no-threads-text">
-                                            <p>No categories in .</p>
+                                            <p>No categories in explore page.</p>
                                         </div>
                                     </div>
                                 <?php } ?>
-
+                            </div>
                             <div class="view-explore-page-button">
                                 <a href="explore-thread-categories.php" id="explore-categories-button">
                                     <button class="home-thread-categories-button">View Explore Page</button>
@@ -143,7 +151,6 @@
                                             </div>
                                         </div>
                                     <?php } ?>
-                            </div>
                                 <?php } else { ?>
                                     <div class="no-threads-container text-center mt-5">
                                         <div class="no-threads-text">
@@ -151,7 +158,7 @@
                                         </div>
                                     </div>
                                 <?php } ?>
-
+                            </div>
                             <div class="view-explore-page-button">
                                 <a href="favorite-thread-categories.php" id="explore-categories-button">
                                     <button class="home-thread-categories-button">View Favorite Categories</button>
@@ -159,7 +166,9 @@
                             </div>
                         </div>
                     </div>
-            
+                </div>
+                
+                <div class="row mt-5">
                     <!-- BELOW: Favorite Threads -->
                     <div class="col-12 col-lg-6">
                         <div class="home-container">
@@ -197,17 +206,14 @@
                                             </div>
                                         </div>
                                     <?php } ?>
-                            </div>
                                 <?php } else { ?>
-
                                     <div class="no-threads-container text-center mt-5">
                                         <div class="no-threads-text">
                                             <p>No favorite threads.</p>
                                         </div>
                                     </div>
-
                                 <?php } ?>
-
+                            </div>
                             <div class="view-explore-page-button">
                                 <a href="favorite-threads.php" id="explore-categories-button">
                                     <button class="home-thread-categories-button">View Favorite Threads</button>
@@ -252,17 +258,14 @@
                                             </div>
                                         </div>
                                     <?php } ?>
-                            </div>
-                                <?php } else { ?>                            
-
+                                <?php } else { ?>   
                                     <div class="no-threads-container text-center mt-5">
                                         <div class="no-threads-text">
                                             <p>No following threads.</p>
                                         </div>
                                     </div>
-
                                 <?php } ?>
-
+                            </div>
                             <div class="view-explore-page-button">
                                 <a href="following-threads.php" id="explore-categories-button">
                                     <button class="home-thread-categories-button">View Following Threads</button>
@@ -282,6 +285,20 @@
               </div>
             </div>
         </section>
+
+        <script>
+            const navCollapse = document.getElementById('nav-collapse');
+            const navbar = document.querySelector('.navbar');
+
+            navCollapse.addEventListener('show.bs.collapse', () => {
+                navbar.classList.add('expanded');
+            });
+
+            navCollapse.addEventListener('hide.bs.collapse', () => {
+                navbar.classList.remove('expanded');
+            });
+        </script>
+
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     </body>

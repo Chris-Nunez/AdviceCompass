@@ -2,6 +2,11 @@
     session_start();
     include 'config.php';
 
+    if (!isset($_SESSION['User_ID'])) {
+        header("Location: login.php?error=1");
+        exit();
+    }
+
     // Ensure user is logged in
     if (!isset($_SESSION['User_ID'])) {
         die("Unauthorized access");

@@ -3,9 +3,15 @@ session_start();
 include 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     if (!isset($_SESSION['User_ID'])) {
-        echo json_encode(["success" => false, "message" => "You must be logged in to comment."]);
-        exit;
+        header("Location: login.php?error=1");
+        exit();
+    }
+
+    if (!isset($_POST['csrf_token']) || !isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+        echo json_encode(["status" => "error", "message" => "Invalid CSRF token."]);
+        exit();
     }
 
     $thread_id = intval($_POST['thread_id']);

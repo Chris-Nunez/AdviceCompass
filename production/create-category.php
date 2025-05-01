@@ -1,6 +1,11 @@
 <?php
     session_start();
     include 'config.php';
+
+    if (!isset($_SESSION['User_ID'])) {
+        header("Location: login.php?error=1");
+        exit();
+    }
 ?>
 
 <!DOCTYPE html>
@@ -27,44 +32,61 @@
         
                 <div class="collapse navbar-collapse" id="nav-collapse">
                     <div class="navbar-nav ms-auto">
-                        <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
-                            <i class="bi bi-person-fill me-2" id="user-icon"></i>
-                        </a>
-                        <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
-                        <a href="settings.php">
-                            <i class="bi bi-gear me-4" id="gear-icon"></i>
-                        </a>
-                        <a href="logout.php">   
-                            <button class="navbar-logout-button">Logout</button>
-                        </a>
+                        <?php if (!isset($_SESSION['User_ID']) || !isset($_SESSION['Username'])): ?>
+                            <a href="index.html">
+                                <button class="navbar-login-button me-4">Login</button>
+                            </a>
+                            <a href="register.php">
+                                <button class="navbar-signup-button">Sign Up</button>
+                            </a>
+                        <?php else: ?>
+                            <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
+                                <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                                <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
+                            </a>
+                            
+                            <a href="settings.php">
+                                <i class="bi bi-gear me-4" id="gear-icon"></i>
+                            </a>
+                            <a href="logout.php">   
+                                <button class="navbar-logout-button">Logout</button>
+                            </a>
+                            <a href="help.php">
+                                <i class="bi bi-question-circle"></i>
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </nav>
 
         <section id="create-category">
-            <div class="top-container d-flex align-items-center justify-content-between">
-                
-                <!-- Left Section: Back & Create Category Buttons -->
-                <div class="d-flex align-items-center flex-1">
-                    <button class="explore-categories-back-button mx-2" onclick="history.back();">
-                        <i class="bi bi-arrow-left"></i> Back
-                    </button>
+            <div class="create-category-container px-5">
+                <div class="top-container d-flex align-items-center justify-content-between">
+                    
+                    <!-- Left Section: Back & Create Category Buttons -->
+                    <div class="d-flex align-items-center flex-1">
+                        <button class="explore-categories-back-button mx-2" onclick="history.back();">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
+                    </div>
+
                 </div>
+                <h2 id="create-category-title">Create Category</h2>
+                <div class="create-category-form-container">
+                    <div id="errormessage" style="color:red;"></div>  
+                    <form class="create-category-form" id="create-category-form" action="create-category-process.php" method="POST">
+                        <label for="category-name">Category Name</label><br>
+                        <input type="text" id="category-name" name="category-name" required> <br> <br>
 
-            </div>
-            <h2 id="create-category-title">Create Category</h2>
-            <div class="create-category-container">
-                <div id="errormessage" style="color:red;"></div>  
-                <form class="create-category-form" id="create-category-form" action="create-category-process.php" method="POST">
-                    <label for="category-name">Category Name</label><br>
-                    <input type="text" id="category-name" name="category-name" required> <br> <br>
+                        <label for="category-description">Category Description</label><br>
+                        <textarea id="category-description" name="category-description" rows="5" cols="50" required></textarea><br><br>
 
-                    <label for="category-description">Category Description</label><br>
-                    <textarea id="category-description" name="category-description" rows="5" cols="50" required></textarea><br><br>
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
 
-                    <button type="submit">Create Category</button> <br> <br>
-                </form>               
+                        <button type="submit">Create Category</button> <br> <br>
+                    </form>               
+                </div>
             </div>
         </section>
 
@@ -77,6 +99,18 @@
         </section>
 
         <script>
+
+            const navCollapse = document.getElementById('nav-collapse');
+            const navbar = document.querySelector('.navbar');
+
+            navCollapse.addEventListener('show.bs.collapse', () => {
+                navbar.classList.add('expanded');
+            });
+
+            navCollapse.addEventListener('hide.bs.collapse', () => {
+                navbar.classList.remove('expanded');
+            });
+
             document.getElementById("create-category-form").addEventListener("submit", function(event) {
                 event.preventDefault(); // Prevent default form submission
 

@@ -1,33 +1,37 @@
 <?php
 include 'config.php';
+session_start();
+
+if (!isset($_SESSION['User_ID'])) {
+    header("Location: login.php?error=1");
+    exit();
+}
 
 $search = isset($_GET['query']) ? trim($_GET['query']) : '';
 
-$sql = "SELECT 
-            IndustryThreadCategories.Industry_Thread_Category_ID, 
-            IndustryThreadCategories.Industry_Thread_Category_Name, 
-            Users.Username, 
-            Users.User_ID, 
-            COUNT(Threads.Thread_ID) AS Thread_Count, 
-            YEAR(IndustryThreadCategories.Industry_Thread_Category_Year) AS Industry_Thread_Category_Year
-        FROM IndustryThreadCategories
-        INNER JOIN Users ON IndustryThreadCategories.User_ID = Users.User_ID
-        LEFT JOIN Threads ON IndustryThreadCategories.Industry_Thread_Category_ID = Threads.Industry_Thread_Category_ID
-        WHERE IndustryThreadCategories.Industry_Thread_Category_Name LIKE ?
-        GROUP BY 
-            IndustryThreadCategories.Industry_Thread_Category_ID, 
-            IndustryThreadCategories.Industry_Thread_Category_Name, 
-            Users.Username, 
-            Users.User_ID, 
-            IndustryThreadCategories.Industry_Thread_Category_Year
-        ORDER BY Industry_Thread_Category_Year DESC";
 
-
-$stmt = $conn->prepare($sql);
+$query = $conn->prepare("SELECT 
+                            IndustryThreadCategories.Industry_Thread_Category_ID, 
+                            IndustryThreadCategories.Industry_Thread_Category_Name, 
+                            Users.Username, 
+                            Users.User_ID, 
+                            COUNT(Threads.Thread_ID) AS Thread_Count, 
+                            YEAR(IndustryThreadCategories.Industry_Thread_Category_Year) AS Industry_Thread_Category_Year
+                        FROM IndustryThreadCategories
+                        INNER JOIN Users ON IndustryThreadCategories.User_ID = Users.User_ID
+                        LEFT JOIN Threads ON IndustryThreadCategories.Industry_Thread_Category_ID = Threads.Industry_Thread_Category_ID
+                        WHERE IndustryThreadCategories.Industry_Thread_Category_Name LIKE ?
+                        GROUP BY 
+                            IndustryThreadCategories.Industry_Thread_Category_ID, 
+                            IndustryThreadCategories.Industry_Thread_Category_Name, 
+                            Users.Username, 
+                            Users.User_ID, 
+                            IndustryThreadCategories.Industry_Thread_Category_Year
+                        ORDER BY Industry_Thread_Category_Year DESC");
 $searchParam = "%" . $search . "%";
-$stmt->bind_param("s", $searchParam);
-$stmt->execute();
-$result = $stmt->get_result();
+$query->bind_param("s", $searchParam);
+$query->execute();
+$result = $query->get_result();
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
@@ -53,6 +57,6 @@ if ($result->num_rows > 0) {
             </div>';
 }
 
-$stmt->close();
+$query->close();
 $conn->close();
 ?>

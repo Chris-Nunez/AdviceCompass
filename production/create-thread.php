@@ -2,14 +2,35 @@
     session_start();
     include 'config.php';
 
-    if (isset($_GET['category_id'])) {
-        $category_id = $_GET['category_id'];
-        echo "Category ID received: " . htmlspecialchars($_GET['category_id']);
-    } 
-    else {
-        echo "No category selected.";
+    if (!isset($_SESSION['User_ID'])) {
+        header("Location: login.php?error=1");
         exit();
     }
+
+    if (isset($_GET['category_id'])) {
+        $category_id = $_GET['category_id'];
+    } 
+    else {
+        echo "Category not found.";
+        exit();
+    }
+
+    $category_id = intval($_GET['category_id']);
+
+    // Check if category exists
+    $check_category = $conn->prepare("SELECT Industry_Thread_Category_ID FROM IndustryThreadCategories WHERE Industry_Thread_Category_ID = ?");
+    $check_category->bind_param("i", $category_id);
+    $check_category->execute();
+    $result = $check_category->get_result();
+
+    if ($result->num_rows === 0) {
+        echo "Category not found.";
+        exit();
+    }
+
+    $category_data = $result->fetch_assoc();
+    $check_category->close();
+
 ?>
 
 <!DOCTYPE html>
@@ -36,49 +57,66 @@
         
                 <div class="collapse navbar-collapse" id="nav-collapse">
                     <div class="navbar-nav ms-auto">
-                        <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
-                            <i class="bi bi-person-fill me-2" id="user-icon"></i>
-                        </a>
-                        <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
-                        <a href="settings.php">
-                            <i class="bi bi-gear me-4" id="gear-icon"></i>
-                        </a>
-                        <a href="logout.php">   
-                            <button class="navbar-logout-button">Logout</button>
-                        </a>
+                        <?php if (!isset($_SESSION['User_ID']) || !isset($_SESSION['Username'])): ?>
+                            <a href="index.html">
+                                <button class="navbar-login-button me-4">Login</button>
+                            </a>
+                            <a href="register.php">
+                                <button class="navbar-signup-button">Sign Up</button>
+                            </a>
+                        <?php else: ?>
+                            <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
+                                <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                                <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
+                            </a>
+                            
+                            <a href="settings.php">
+                                <i class="bi bi-gear me-4" id="gear-icon"></i>
+                            </a>
+                            <a href="logout.php">   
+                                <button class="navbar-logout-button">Logout</button>
+                            </a>
+                            <a href="help.php">
+                                <i class="bi bi-question-circle"></i>
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </nav>
 
         <section id="create-thread">
-            <div class="top-container d-flex align-items-center justify-content-between">
-                
-                <!-- Left Section: Back & Create Category Buttons -->
-                <div class="d-flex align-items-center flex-1">
-                    <button class="explore-categories-back-button mx-2" onclick="history.back();">
-                        <i class="bi bi-arrow-left"></i> Back
-                    </button>
+            <div class="create-thread-container px-5">
+                <div class="top-container d-flex align-items-center justify-content-between">
+                    
+                    <!-- Left Section: Back & Create Category Buttons -->
+                    <div class="d-flex align-items-center flex-1">
+                        <button class="explore-categories-back-button mx-2" onclick="history.back();">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
+                    </div>
+
                 </div>
+                <h2 id="create-thread-title">Create Thread</h2>
+                <div class="create-thread-form-container">
+                    <div id="errormessage" style="color:red;"></div> 
+                    <form class="create-thread-form" id="create-thread-form" action="create-thread-process.php" method="POST" enctype="multipart/form-data">
+                        <label for="thread-title">Thread title</label><br>
+                        <input type="text" id="thread-title" name="thread-title" required> <br> <br>
 
-            </div>
-            <h2 id="create-thread-title">Create Thread</h2>
-            <div class="create-thread-container">
-                <div id="errormessage" style="color:red;"></div> 
-                <form class="create-thread-form" id="create-thread-form" action="create-thread-process.php" method="POST">
-                    <label for="thread-title">Thread title</label><br>
-                    <input type="text" id="thread-title" name="thread-title" required> <br> <br>
+                        <label for="thread-text">Thread Text</label><br>
+                        <textarea id="thread-text" name="thread-text" rows="5" cols="50" required></textarea><br><br>
 
-                    <label for="thread-text">Thread Text</label><br>
-                    <textarea id="thread-text" name="thread-text" rows="5" cols="50" required></textarea><br><br>
+                        <label for="thread-image">Upload Image (Optional)</label><br>
+                        <input type="file" id="thread-image" name="thread-image" accept="image/*"><br><br>
 
-                    <label for="thread-image">Upload Image (Optional)</label><br>
-                    <input type="file" id="thread-image" name="thread-image" accept="image/*"><br><br>
+                        <input type="hidden" name="category_id" value="<?php echo htmlspecialchars($category_id); ?>">
 
-                    <input type="hidden" name="category_id" value="<?php echo htmlspecialchars($category_id); ?>">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
 
-                    <button type="submit" id="create-thread-button">Create Thread</button> <br> <br>
-                </form>               
+                        <button type="submit" id="create-thread-button">Create Thread</button> <br> <br>
+                    </form>
+                </div>
             </div>
         </section>
 
@@ -91,6 +129,18 @@
         </section>
 
         <script>
+
+            const navCollapse = document.getElementById('nav-collapse');
+            const navbar = document.querySelector('.navbar');
+
+            navCollapse.addEventListener('show.bs.collapse', () => {
+                navbar.classList.add('expanded');
+            });
+
+            navCollapse.addEventListener('hide.bs.collapse', () => {
+                navbar.classList.remove('expanded');
+            });
+
             document.getElementById("create-thread-form").addEventListener("submit", function(event) {
                 event.preventDefault(); // Prevent default form submission
 

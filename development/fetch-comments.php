@@ -1,6 +1,11 @@
 <?php
 include 'config.php'; 
 
+if (!isset($_SESSION['User_ID'])) {
+    header("Location: login.php?error=1");
+    exit();
+}
+
 $thread_id = $_GET['thread_id'] ?? '';
 
 if (!$thread_id) {

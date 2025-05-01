@@ -3,28 +3,39 @@ include 'config.php';
 session_start();
 
 if (!isset($_SESSION['User_ID'])) {
-    echo '<p class="text-muted">Please log in to view your favorite threads.</p>';
-    exit;
+    header("Location: login.php?error=1");
+    exit();
 }
 
 $user_id = $_SESSION['User_ID'];
 $search = isset($_GET['query']) ? trim($_GET['query']) : '';
 
-$sql = "
-    SELECT t.Thread_ID, t.Thread_Title, t.Thread_Text, DATE(t.Thread_Date_Time) AS Thread_Date, 
-           u.Username, u.User_ID, itc.Industry_Thread_Category_Name
-    FROM FavoriteThreads ft
-    INNER JOIN Threads t ON ft.Thread_ID = t.Thread_ID
-    INNER JOIN Users u ON t.User_ID = u.User_ID
-    INNER JOIN IndustryThreadCategories itc ON t.Industry_Thread_Category_ID = itc.Industry_Thread_Category_ID
-    WHERE ft.User_ID = ? AND (t.Thread_Title LIKE ? OR t.Thread_Text LIKE ?)
-    ORDER BY t.Thread_Date_Time DESC";
 
-$stmt = $conn->prepare($sql);
+$query = $conn->prepare("SELECT 
+                            Threads.Thread_ID, 
+                            Threads.Thread_Title, 
+                            Threads.Thread_Text, 
+                            DATE(Threads.Thread_Date_Time) AS Thread_Date, 
+                            Users.Username, 
+                            Users.User_ID, 
+                            IndustryThreadCategories.Industry_Thread_Category_Name
+                        FROM 
+                            FavoriteThreads
+                        INNER JOIN 
+                            Threads ON FavoriteThreads.Thread_ID = Threads.Thread_ID
+                        INNER JOIN 
+                            Users ON Threads.User_ID = Users.User_ID
+                        INNER JOIN 
+                            IndustryThreadCategories ON Threads.Industry_Thread_Category_ID = IndustryThreadCategories.Industry_Thread_Category_ID
+                        WHERE 
+                            FavoriteThreads.User_ID = ? 
+                            AND (Threads.Thread_Title LIKE ? OR Threads.Thread_Text LIKE ?)
+                        ORDER BY 
+                            Threads.Thread_Date_Time DESC");
 $searchParam = "%" . $search . "%";
-$stmt->bind_param("iss", $user_id, $searchParam, $searchParam);
-$stmt->execute();
-$result = $stmt->get_result();
+$query->bind_param("iss", $user_id, $searchParam, $searchParam);
+$query->execute();
+$result = $query->get_result();
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
@@ -47,7 +58,7 @@ if ($result->num_rows > 0) {
                     </div>
 
                     <div class="thread-text">
-                        <p>' . htmlspecialchars($row["Thread_Text"]) . '</p>
+                        <p>' . htmlspecialchars(mb_strimwidth($row["Thread_Text"], 0, 27, '...')) . '</p>
                     </div>
 
                     <div class="thread-year-created">
@@ -70,6 +81,6 @@ if ($result->num_rows > 0) {
           </div>';
 }
 
-$stmt->close();
+$query->close();
 $conn->close();
 ?>

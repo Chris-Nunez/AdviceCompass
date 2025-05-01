@@ -2,6 +2,9 @@ development/config.php
 testing/config.php
 production/config.php
 development/vendor/
+testing/vendor/
+production/vendor/
 etc/nginx/sites-available/development
 etc/nginx/sites-available/testing
 etc/nginx/sites-available/production
+production/.env

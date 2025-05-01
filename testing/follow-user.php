@@ -3,7 +3,7 @@ session_start();
 include 'config.php';
 
 if (!isset($_SESSION['User_ID'])) {
-    echo "error: session missing";
+    header("Location: login.php?error=1");
     exit();
 }
 

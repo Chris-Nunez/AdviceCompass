@@ -5,7 +5,12 @@
     if (!isset($_GET['user_id'])) {
         die("User ID not provided.");
     }
-    
+
+    if (!isset($_SESSION['User_ID'])) {
+        header("Location: login.php?error=1");
+        exit();
+    }
+
     $user_id = intval($_GET['user_id']); 
     
     $query = $conn->prepare("SELECT Threads.Thread_ID, Threads.Thread_Title, Threads.Thread_Text, Threads.Thread_Date_Time, 
@@ -69,6 +74,9 @@
                         </a>
                         <a href="logout.php">   
                             <button class="navbar-logout-button">Logout</button>
+                        </a>
+                        <a href="help.php">
+                            <i class="bi bi-question-circle"></i>
                         </a>
                     </div>
                 </div>

@@ -2,12 +2,16 @@
     session_start();
     include 'config.php';
 
-    // Check if category_id exists
-    if (!isset($_GET['thread_id'])) {
-        die("No category selected.");
+    if (!isset($_SESSION['User_ID'])) {
+        header("Location: login.php?error=1");
+        exit();
     }
 
     $thread_id = intval($_GET['thread_id']);  
+
+    if (!isset($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
 
     // Fetch category details
     $query = $conn->prepare("SELECT * FROM Threads 
@@ -65,16 +69,29 @@
         
                 <div class="collapse navbar-collapse" id="nav-collapse">
                     <div class="navbar-nav ms-auto">
-                        <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
-                            <i class="bi bi-person-fill me-2" id="user-icon"></i>
-                        </a>
-                        <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
-                        <a href="settings.php">
-                            <i class="bi bi-gear me-4" id="gear-icon"></i>
-                        </a>
-                        <a href="logout.php">   
-                            <button class="navbar-logout-button">Logout</button>
-                        </a>
+                        <?php if (!isset($_SESSION['User_ID']) || !isset($_SESSION['Username'])): ?>
+                            <a href="index.html">
+                                <button class="navbar-login-button me-4">Login</button>
+                            </a>
+                            <a href="register.php">
+                                <button class="navbar-signup-button">Sign Up</button>
+                            </a>
+                        <?php else: ?>
+                            <a href="view-profile.php?user_id=<?php echo $_SESSION['User_ID']; ?>">
+                                <i class="bi bi-person-fill me-2" id="user-icon"></i>
+                                <span class="text-white me-4" id="navbar-username"><?php echo htmlspecialchars($_SESSION['Username']); ?></span>
+                            </a>
+                            
+                            <a href="settings.php">
+                                <i class="bi bi-gear me-4" id="gear-icon"></i>
+                            </a>
+                            <a href="logout.php">   
+                                <button class="navbar-logout-button">Logout</button>
+                            </a>
+                            <a href="help.php">
+                                <i class="bi bi-question-circle"></i>
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -223,6 +240,19 @@
 
         <script>
 
+            const navCollapse = document.getElementById('nav-collapse');
+            const navbar = document.querySelector('.navbar');
+
+            navCollapse.addEventListener('show.bs.collapse', () => {
+                navbar.classList.add('expanded');
+            });
+
+            navCollapse.addEventListener('hide.bs.collapse', () => {
+                navbar.classList.remove('expanded');
+            });
+
+            const CSRF_TOKEN = "<?php echo $_SESSION['csrf_token']; ?>";
+
             document.addEventListener("DOMContentLoaded", function() {
                 let button = document.getElementById('favorite-thread-btn');
                 
@@ -243,7 +273,8 @@
                     fetch('favorite-thread-process.php', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: 'thread_id=' + encodeURIComponent(threadId)
+                        body: 'thread_id=' + encodeURIComponent(threadId) +
+                            '&csrf_token=' + encodeURIComponent(CSRF_TOKEN)
                     })
                     .then(response => response.json())
                     .then(data => {
@@ -274,7 +305,8 @@
                                 headers: {
                                     "Content-Type": "application/x-www-form-urlencoded"
                                 },
-                                body: "thread_id=" + encodeURIComponent(threadId)
+                                body: "thread_id=" + encodeURIComponent(threadId) +
+                                    '&csrf_token=' + encodeURIComponent(CSRF_TOKEN)
                             })
                             .then(response => response.text())
                             .then(data => {
@@ -309,7 +341,8 @@
                                 headers: {
                                     "Content-Type": "application/x-www-form-urlencoded",
                                 },
-                                body: `thread_id=${threadId}&is_like=${isLike}`
+                                body: `thread_id=${threadId}&is_like=${isLike}` +
+                                    '&csrf_token=' + encodeURIComponent(CSRF_TOKEN)
                             })
                             .then(response => response.json())
                             .then(data => {
@@ -353,7 +386,8 @@
                 fetch('submit-comment.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: 'thread_id=' + encodeURIComponent(threadId) + '&comment_text=' + encodeURIComponent(commentText)
+                    body: 'thread_id=' + encodeURIComponent(threadId) + '&comment_text=' + encodeURIComponent(commentText) +
+                        '&csrf_token=' + encodeURIComponent(CSRF_TOKEN)
                 })
                 .then(res => res.json())
                 .then(data => {
@@ -383,7 +417,8 @@
                             headers: {
                                 "Content-Type": "application/x-www-form-urlencoded",
                             },
-                            body: `comment_id=${commentId}&is_like=${isLike}`
+                            body: `comment_id=${commentId}&is_like=${isLike}` +
+                                '&csrf_token=' + encodeURIComponent(CSRF_TOKEN)
                         })
                         .then(response => response.json())
                         .then(data => {
@@ -433,7 +468,8 @@
                     fetch('submit-reply.php', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: 'comment_id=' + encodeURIComponent(commentId) + '&reply_text=' + encodeURIComponent(replyText)
+                        body: 'comment_id=' + encodeURIComponent(commentId) + '&reply_text=' + encodeURIComponent(replyText) +
+                            '&csrf_token=' + encodeURIComponent(CSRF_TOKEN)
                     })
                     .then(res => res.json())
                     .then(data => {
@@ -535,7 +571,8 @@
                         headers: {
                             "Content-Type": "application/x-www-form-urlencoded"
                         },
-                        body: `reply_id=${replyId}&is_like=${isLike}`
+                        body: `reply_id=${replyId}&is_like=${isLike}` +
+                            '&csrf_token=' + encodeURIComponent(CSRF_TOKEN)
                     })
                     .then(response => response.json())
                     .then(data => {

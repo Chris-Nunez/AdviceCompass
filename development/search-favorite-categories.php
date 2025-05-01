@@ -3,14 +3,14 @@
     include 'config.php';
 
     if (!isset($_SESSION['User_ID'])) {
-        echo '';
-        exit;
+        header("Location: login.php?error=1");
+        exit();
     }
 
     $user_id = $_SESSION['User_ID'];
     $search = isset($_GET['query']) ? trim($_GET['query']) : '';
 
-    $stmt = $conn->prepare("SELECT 
+    $query = $conn->prepare("SELECT 
                                 IndustryThreadCategories.Industry_Thread_Category_ID,
                                 IndustryThreadCategories.Industry_Thread_Category_Name,
                                 IndustryThreadCategories.Industry_Thread_Category_Description,
@@ -33,14 +33,14 @@
                             ORDER BY IndustryThreadCategories.Industry_Thread_Category_Year DESC;");
     
     $searchParam = "%$search%";
-    $stmt->bind_param("is", $user_id, $searchParam);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $query->bind_param("is", $user_id, $searchParam);
+    $query->execute();
+    $result = $query->get_result();
 
     if ($result->num_rows > 0) {
         echo '<div class="row mt-5" id="categories-container">';
         while ($row = $result->fetch_assoc()) {
-            echo '<div class="col-12 col-sm-6 col-md-4 col-lg-2 category-item">
+            echo '<div class="col-12 col-sm-6 col-md-4 col-lg-2">
                     <div class="explore-categories-container">
                         <div class="category-name">
                             <h5>' . htmlspecialchars($row['Industry_Thread_Category_Name']) . '</h5>
@@ -72,6 +72,6 @@
               </div>';
     }
     
-    $stmt->close();
+    $query->close();
     $conn->close();
 ?>

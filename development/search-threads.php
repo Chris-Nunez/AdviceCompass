@@ -1,21 +1,26 @@
 <?php
 include 'config.php';
+session_start();
+
+if (!isset($_SESSION['User_ID'])) {
+    header("Location: login.php?error=1");
+    exit();
+}
 
 $search = isset($_GET['query']) ? trim($_GET['query']) : '';
 $category_id = isset($_GET['category_id']) ? intval($_GET['category_id']) : 0;
 
-$sql = "SELECT Threads.Thread_ID, Threads.Thread_Title, Threads.Thread_Text, DATE(Threads.Thread_Date_Time) AS Thread_Date, 
-               Users.Username, Users.User_ID
-        FROM Threads 
-        INNER JOIN Users ON Threads.User_ID = Users.User_ID
-        WHERE Threads.Industry_Thread_Category_ID = ? AND Threads.Thread_Title LIKE ? 
-        ORDER BY Threads.Thread_Date_Time DESC";
 
-$stmt = $conn->prepare($sql);
+$query = $conn->prepare("SELECT Threads.Thread_ID, Threads.Thread_Title, Threads.Thread_Text, DATE(Threads.Thread_Date_Time) AS Thread_Date, 
+                            Users.Username, Users.User_ID
+                        FROM Threads 
+                        INNER JOIN Users ON Threads.User_ID = Users.User_ID
+                        WHERE Threads.Industry_Thread_Category_ID = ? AND Threads.Thread_Title LIKE ? 
+                        ORDER BY Threads.Thread_Date_Time DESC");
 $searchParam = "%" . $search . "%";
-$stmt->bind_param("is", $category_id, $searchParam);
-$stmt->execute();
-$result = $stmt->get_result();
+$query->bind_param("is", $category_id, $searchParam);
+$query->execute();
+$result = $query->get_result();
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
@@ -30,7 +35,7 @@ if ($result->num_rows > 0) {
                     </div>
 
                     <div class="thread-text">
-                        <p>' . htmlspecialchars($row["Thread_Text"]) . '</p>
+                        <p>' . htmlspecialchars(mb_strimwidth($row["Thread_Text"], 0, 27, '...')) . '</p>
                     </div>
 
                     <div class="thread-year-created">
@@ -51,6 +56,6 @@ if ($result->num_rows > 0) {
             </div>';
 }
 
-$stmt->close();
+$query->close();
 $conn->close();
 ?>

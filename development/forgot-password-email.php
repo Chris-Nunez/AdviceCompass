@@ -16,7 +16,7 @@
 
         <nav class="navbar navbar-expand-md fixed-top" style="background-color: #303030;">
             <div class="container">
-                <a href="home.php" class="navbar-brand text-white">
+                <a href="#home" class="navbar-brand text-white">
                     <h1 class="text-white mb-0">AdviceCompass</h1>
                 </a>
         
@@ -25,12 +25,15 @@
                 </button>
         
                 <div class="collapse navbar-collapse" id="nav-collapse">
-                    <div class="navbar-nav ms-auto">
-                        <a href="index.html">
-                            <button class="navbar-login-button me-4">Login</button>
+                    <div class="navbar-nav ms-auto text-center text-md-end mobile-nav-buttons">
+                        <a href="login.php">
+                            <button class="navbar-login-button me-md-4 mb-2 mb-md-0">Login</button>
                         </a>
-                        <a href="register.html">
+                        <a href="register.php">
                             <button class="navbar-signup-button">Sign Up</button>
+                        </a>
+                        <a href="help.php">
+                            <i class="bi bi-question-circle"></i>
                         </a>
                     </div>
                 </div>
@@ -40,15 +43,19 @@
         <section id="forgot-password">
             <h2 id="forgot-password-title">Forgot Password</h2>
             <div class="forgot-password-container">
-                <div id="errormessage" style="color:red;"></div>  <!-- This div will hold the error messages -->
+                <?php if (isset($_GET['sent'])): ?>
+                    <div id="info-message" style="color: green; text-align: center; margin-bottom: 10px;">
+                        If the email exists in our system, a reset link will be sent.
+                    </div>
+                <?php endif; ?>
+                <div id="errormessage" style="color:red;"></div>
                 <form class="forgot-password-form" id="forgot-password-form" action="forgot-password-email-process.php" method="POST">
-
                     <label for="email">Email</label><br>
                     <input type="text" id="email" name="email" required> <br> <br>
-
                     <button type="submit">Send Forgot Password Link</button> <br> <br>
-                </form>               
+                </form>
             </div>
+
         </section>
 
         <section id="footer-section">
@@ -60,9 +67,22 @@
         </section>
 
         <script>
+
+            const navCollapse = document.getElementById('nav-collapse');
+            const navbar = document.querySelector('.navbar');
+
+            navCollapse.addEventListener('show.bs.collapse', () => {
+                navbar.classList.add('expanded');
+            });
+
+            navCollapse.addEventListener('hide.bs.collapse', () => {
+                navbar.classList.remove('expanded');
+            });
+
+            
             document.getElementById("forgot-password-form").addEventListener("submit", function(event) {
                 var errormessage = "";
-                var emailRegex = /^[A-Za-z0-9._%+-]+@[a-z]+\.[a-z]{2,3}$/;
+                var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
                 var email = document.getElementById("email").value;
                 var messageBox = document.getElementById("errormessage");
