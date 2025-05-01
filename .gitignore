@@ -1,6 +1,9 @@
 development/config.php
 testing/config.php
 production/config.php
+development/uploads/
+testing/uploads/
+production/uploads/
 development/vendor/
 testing/vendor/
 production/vendor/
